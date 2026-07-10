@@ -99,6 +99,12 @@
   select:focus, input[type=text]:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-bg); }
 
   .variant-combo { position: relative; }
+  .variant-combo .variant-input { padding-right: 38px; cursor: pointer; }
+  .variant-combo::after {
+    content: ''; position: absolute; right: 14px; top: 50%; width: 9px; height: 9px;
+    border-right: 2px solid var(--ink-muted); border-bottom: 2px solid var(--ink-muted);
+    transform: translateY(-65%) rotate(45deg); pointer-events: none;
+  }
   .variant-dropdown {
     position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface);
     border: 1.5px solid var(--border); border-radius: var(--radius); max-height: 240px; overflow-y: auto;
@@ -855,6 +861,7 @@ function createVariantCombo(container, onChange) {
   }
 
   input.addEventListener('focus', renderDropdown);
+  input.addEventListener('click', renderDropdown);
   input.addEventListener('input', renderDropdown);
   input.addEventListener('blur', () => {
     setTimeout(() => {
