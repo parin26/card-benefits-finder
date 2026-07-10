@@ -1,0 +1,82 @@
+<svg viewBox="0 0 1000 640" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <rect width="1000" height="640" rx="16" fill="#F3F5F0"/>
+
+  <text x="30" y="46" font-size="22" font-weight="700" fill="#171C17">Compare cards</text>
+  <text x="30" y="68" font-size="13" fill="#565F55">Line up 2 to 4 cards side by side, with a quick visual comparison of fees and forex markup.</text>
+
+  <!-- Card A -->
+  <g>
+    <rect x="30" y="90" width="300" height="110" rx="14" fill="#171C17"/>
+    <text x="50" y="118" font-size="10.5" fill="#ffffffcc" letter-spacing="1">HDFC BANK</text>
+    <rect x="230" y="106" width="50" height="20" rx="5" fill="#ffffff2e"/>
+    <text x="255" y="120" text-anchor="middle" font-size="9.5" fill="#fff" font-weight="700">VISA</text>
+    <text x="50" y="156" font-size="17" font-weight="700" fill="#fff">Infinia Metal Edition</text>
+    <text x="50" y="184" font-size="11" fill="#ffffffd9">Credit card</text>
+
+    <rect x="30" y="212" width="300" height="330" rx="14" fill="#fff" stroke="#DBDFD5"/>
+    <circle cx="50" cy="238" r="4.5" fill="#171C17"/>
+    <text x="62" y="243" font-size="14.5" font-weight="700" fill="#171C17">HDFC Bank</text>
+    <text x="46" y="260" font-size="11" fill="#565F55">Credit Card - Infinia Metal Edition (Visa)</text>
+    <rect x="46" y="278" width="120" height="34" rx="8" fill="#EAEDE6"/>
+    <text x="56" y="292" font-size="9" fill="#8B948A" font-weight="700">ANNUAL</text>
+    <text x="56" y="306" font-size="12.5" font-family="monospace" fill="#171C17">₹12,500</text>
+    <rect x="176" y="278" width="120" height="34" rx="8" fill="#EAEDE6"/>
+    <text x="186" y="292" font-size="9" fill="#8B948A" font-weight="700">FOREX</text>
+    <text x="186" y="306" font-size="12.5" font-family="monospace" fill="#171C17">2.0%</text>
+    <text x="46" y="336" font-size="10.5" font-weight="700" fill="#565F55">REWARDS</text>
+    <text x="46" y="354" font-size="12" fill="#171C17">• 5 points per ₹150 on all spends</text>
+    <text x="46" y="372" font-size="12" fill="#171C17">• Unlimited airport + railway lounge</text>
+    <text x="46" y="390" font-size="12" fill="#171C17">• Complimentary golf rounds</text>
+    <rect x="46" y="500" width="260" height="38" rx="10" fill="#fff" stroke="#DBDFD5"/>
+    <text x="176" y="524" text-anchor="middle" font-size="12.5" font-weight="700" fill="#171C17">Save this card</text>
+  </g>
+
+  <!-- Card B -->
+  <g>
+    <rect x="350" y="90" width="300" height="110" rx="14" fill="#205C52"/>
+    <text x="370" y="118" font-size="10.5" fill="#ffffffcc" letter-spacing="1">ICICI BANK</text>
+    <rect x="550" y="106" width="70" height="20" rx="5" fill="#ffffff2e"/>
+    <text x="585" y="120" text-anchor="middle" font-size="9.5" fill="#fff" font-weight="700">MASTERCARD</text>
+    <text x="370" y="156" font-size="17" font-weight="700" fill="#fff">Sapphiro</text>
+    <text x="370" y="184" font-size="11" fill="#ffffffd9">Credit card</text>
+
+    <rect x="350" y="212" width="300" height="330" rx="14" fill="#fff" stroke="#DBDFD5"/>
+    <circle cx="370" cy="238" r="4.5" fill="#205C52"/>
+    <text x="382" y="243" font-size="14.5" font-weight="700" fill="#171C17">ICICI Bank</text>
+    <text x="366" y="260" font-size="11" fill="#565F55">Credit Card - Sapphiro (Mastercard)</text>
+    <rect x="366" y="278" width="120" height="34" rx="8" fill="#EAEDE6"/>
+    <text x="376" y="292" font-size="9" fill="#8B948A" font-weight="700">ANNUAL</text>
+    <text x="376" y="306" font-size="12.5" font-family="monospace" fill="#171C17">₹3,500</text>
+    <rect x="496" y="278" width="120" height="34" rx="8" fill="#EAEDE6"/>
+    <text x="506" y="292" font-size="9" fill="#8B948A" font-weight="700">FOREX</text>
+    <text x="506" y="306" font-size="12.5" font-family="monospace" fill="#171C17">3.5%</text>
+    <text x="366" y="336" font-size="10.5" font-weight="700" fill="#565F55">REWARDS</text>
+    <text x="366" y="354" font-size="12" fill="#171C17">• 4 points per ₹100 on dining and travel</text>
+    <text x="366" y="372" font-size="12" fill="#171C17">• 6 domestic lounge visits per year</text>
+    <text x="366" y="390" font-size="12" fill="#171C17">• Complimentary golf lessons</text>
+    <rect x="366" y="500" width="260" height="38" rx="10" fill="#fff" stroke="#DBDFD5"/>
+    <text x="496" y="524" text-anchor="middle" font-size="12.5" font-weight="700" fill="#171C17">Save this card</text>
+  </g>
+
+  <!-- Add another card slot -->
+  <g>
+    <rect x="670" y="90" width="300" height="452" rx="14" fill="none" stroke="#DBDFD5" stroke-width="2" stroke-dasharray="6 6"/>
+    <text x="820" y="300" text-anchor="middle" font-size="24" fill="#8B948A">+</text>
+    <text x="820" y="326" text-anchor="middle" font-size="13" font-weight="700" fill="#565F55">Add another card</text>
+    <text x="820" y="344" text-anchor="middle" font-size="11" fill="#8B948A">up to 4 total</text>
+  </g>
+
+  <!-- Chart -->
+  <g>
+    <rect x="30" y="558" width="940" height="72" rx="14" fill="#fff" stroke="#DBDFD5"/>
+    <text x="50" y="580" font-size="12.5" font-weight="700" fill="#171C17">Annual fee (lower is better)</text>
+    <text x="50" y="600" font-size="10.5" fill="#171C17">HDFC Infinia</text>
+    <rect x="150" y="590" width="300" height="14" rx="4" fill="#EAEDE6"/>
+    <rect x="150" y="590" width="300" height="14" rx="4" fill="#205C52"/>
+    <text x="460" y="601" font-size="10.5" font-family="monospace" fill="#565F55">₹12,500</text>
+    <text x="50" y="618" font-size="10.5" fill="#171C17">ICICI Sapphiro</text>
+    <rect x="150" y="609" width="84" height="14" rx="4" fill="#EAEDE6"/>
+    <rect x="150" y="609" width="84" height="14" rx="4" fill="#205C52"/>
+    <text x="460" y="620" font-size="10.5" font-family="monospace" fill="#565F55">₹3,500</text>
+  </g>
+</svg>

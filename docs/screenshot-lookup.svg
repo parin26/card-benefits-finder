@@ -1,0 +1,115 @@
+<svg viewBox="0 0 1000 660" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <rect width="1000" height="660" rx="16" fill="#F3F5F0"/>
+
+  <!-- Eyebrow steps -->
+  <g font-size="12" fill="#205C52" font-weight="700">
+    <circle cx="34" cy="36" r="9" fill="#205C52"/><text x="34" y="40" text-anchor="middle" fill="#fff" font-size="10">1</text>
+    <text x="50" y="40" fill="#565F55" font-weight="400">Bank</text>
+    <circle cx="120" cy="36" r="9" fill="#205C52"/><text x="120" y="40" text-anchor="middle" fill="#fff" font-size="10">2</text>
+    <text x="136" y="40" fill="#565F55" font-weight="400">Card type</text>
+    <circle cx="230" cy="36" r="9" fill="#205C52"/><text x="230" y="40" text-anchor="middle" fill="#fff" font-size="10">3</text>
+    <text x="246" y="40" fill="#565F55" font-weight="400">Network</text>
+    <circle cx="330" cy="36" r="9" fill="#205C52"/><text x="330" y="40" text-anchor="middle" fill="#fff" font-size="10">4</text>
+    <text x="346" y="40" fill="#565F55" font-weight="400">Variant</text>
+  </g>
+
+  <!-- Title -->
+  <text x="30" y="80" font-size="30" font-weight="700" fill="#171C17">Card Benefits Finder</text>
+  <text x="30" y="104" font-size="13.5" fill="#565F55">Pick a bank, card type, and network to see matching cards, then find their current benefits.</text>
+
+  <!-- Mode row -->
+  <g font-size="13" font-weight="700">
+    <rect x="30" y="122" width="168" height="34" rx="17" fill="#171C17"/>
+    <text x="114" y="144" text-anchor="middle" fill="#fff">Look up one card</text>
+    <rect x="204" y="122" width="120" height="34" rx="17" fill="#EAEDE6" stroke="#DBDFD5"/>
+    <text x="264" y="144" text-anchor="middle" fill="#565F55">Compare cards</text>
+    <rect x="330" y="122" width="168" height="34" rx="17" fill="#EAEDE6" stroke="#DBDFD5"/>
+    <text x="414" y="144" text-anchor="middle" fill="#565F55">Find salary account</text>
+    <rect x="504" y="122" width="150" height="34" rx="17" fill="#EAEDE6" stroke="#DBDFD5"/>
+    <text x="579" y="144" text-anchor="middle" fill="#565F55">Find my ideal card</text>
+  </g>
+
+  <!-- Left column: card mockup + picker -->
+  <g>
+    <rect x="30" y="180" width="280" height="150" rx="16" fill="#171C17"/>
+    <text x="52" y="212" font-size="11" letter-spacing="1" fill="#ffffffcc">HDFC BANK</text>
+    <rect x="234" y="198" width="58" height="22" rx="6" fill="#ffffff2e"/>
+    <text x="263" y="213" text-anchor="middle" font-size="10.5" fill="#fff" font-weight="700">RUPAY</text>
+    <rect x="52" y="228" width="30" height="22" rx="4" fill="#ffffff40"/>
+    <text x="52" y="272" font-size="21" font-weight="700" fill="#fff">Regalia Gold</text>
+    <text x="52" y="308" font-size="12" fill="#ffffffd9">Credit card</text>
+    <text x="292" y="308" text-anchor="end" font-size="12" fill="#ffffffd9" font-family="monospace" letter-spacing="1">123456 •• 1234</text>
+
+    <rect x="30" y="344" width="280" height="230" rx="16" fill="#fff" stroke="#DBDFD5"/>
+    <text x="50" y="370" font-size="12" fill="#565F55" font-weight="700">Bank</text>
+    <rect x="50" y="378" width="240" height="34" rx="10" fill="#fff" stroke="#DBDFD5"/>
+    <text x="62" y="400" font-size="13" fill="#171C17">HDFC Bank</text>
+    <text x="50" y="428" font-size="12" fill="#565F55" font-weight="700">Card type</text>
+    <rect x="50" y="436" width="240" height="34" rx="10" fill="#fff" stroke="#DBDFD5"/>
+    <text x="62" y="458" font-size="13" fill="#171C17">Credit card</text>
+    <text x="50" y="486" font-size="12" fill="#565F55" font-weight="700">Network</text>
+    <rect x="50" y="494" width="240" height="34" rx="10" fill="#fff" stroke="#DBDFD5"/>
+    <text x="62" y="516" font-size="13" fill="#171C17">RuPay</text>
+    <text x="50" y="544" font-size="12" fill="#565F55" font-weight="700">Variant</text>
+    <rect x="50" y="552" width="240" height="34" rx="10" fill="#fff" stroke="#DBDFD5"/>
+    <text x="62" y="574" font-size="13" fill="#171C17">Regalia Gold</text>
+
+    <rect x="30" y="588" width="280" height="46" rx="10" fill="#205C52"/>
+    <text x="170" y="616" text-anchor="middle" font-size="14.5" font-weight="700" fill="#fff">Find benefits</text>
+  </g>
+
+  <!-- Right column: results with tabs -->
+  <g>
+    <rect x="330" y="180" width="640" height="454" rx="16" fill="#fff" stroke="#DBDFD5"/>
+    <circle cx="356" cy="206" r="5" fill="#171C17"/>
+    <text x="370" y="212" font-size="18" font-weight="700" fill="#171C17">HDFC Bank</text>
+    <text x="352" y="232" font-size="12.5" fill="#565F55">Credit Card - Regalia Gold (RuPay)</text>
+
+    <!-- Tabs -->
+    <line x1="352" y1="252" x2="938" y2="252" stroke="#DBDFD5" stroke-width="1.5"/>
+    <text x="352" y="248" font-size="13" font-weight="700" fill="#205C52">Overview</text>
+    <line x1="352" y1="252" x2="440" y2="252" stroke="#205C52" stroke-width="2.5"/>
+    <text x="466" y="248" font-size="13" font-weight="700" fill="#8B948A">Rewards and perks</text>
+    <text x="610" y="248" font-size="13" font-weight="700" fill="#8B948A">Fees and eligibility</text>
+
+    <!-- Welcome pill -->
+    <rect x="352" y="270" width="560" height="36" rx="10" fill="#E7F1EE"/>
+    <text x="368" y="292" font-size="13" fill="#143C35" font-weight="600">12,500 bonus reward points on ₹1,00,000 spend within 90 days</text>
+
+    <!-- Fee grid -->
+    <g font-size="10.5" fill="#8B948A" font-weight="700">
+      <rect x="352" y="320" width="130" height="56" rx="8" fill="#EAEDE6"/>
+      <text x="364" y="338">JOINING</text>
+      <text x="364" y="360" font-size="14" fill="#171C17" font-family="monospace" font-weight="500">₹1,000 + GST</text>
+
+      <rect x="492" y="320" width="130" height="56" rx="8" fill="#EAEDE6"/>
+      <text x="504" y="338">ANNUAL</text>
+      <text x="504" y="360" font-size="14" fill="#171C17" font-family="monospace" font-weight="500">₹1,000 + GST</text>
+
+      <rect x="632" y="320" width="130" height="56" rx="8" fill="#EAEDE6"/>
+      <text x="644" y="338">ADD-ON CARD</text>
+      <text x="644" y="360" font-size="14" fill="#171C17" font-family="monospace" font-weight="500">Free</text>
+
+      <rect x="772" y="320" width="140" height="56" rx="8" fill="#EAEDE6"/>
+      <text x="784" y="338">INTEREST RATE</text>
+      <text x="784" y="360" font-size="14" fill="#171C17" font-family="monospace" font-weight="500">3.4% p.m.</text>
+    </g>
+
+    <!-- Fee waiver callout -->
+    <rect x="352" y="392" width="560" height="56" rx="0" fill="#E7F1EE"/>
+    <rect x="352" y="392" width="4" height="56" fill="#205C52"/>
+    <text x="368" y="410" font-size="10.5" font-weight="700" fill="#143C35" letter-spacing="0.5">HOW TO WAIVE THE FEE</text>
+    <text x="368" y="430" font-size="13" fill="#171C17">Spend ₹3,00,000 in the card anniversary year to waive next year's fee.</text>
+
+    <!-- Maximize tips callout -->
+    <rect x="352" y="460" width="560" height="80" fill="#FBF3E3"/>
+    <rect x="352" y="460" width="4" height="80" fill="#A8781F"/>
+    <text x="368" y="478" font-size="10.5" font-weight="700" fill="#7A5817" letter-spacing="0.5">GET THE MOST FROM THIS CARD</text>
+    <text x="368" y="498" font-size="13" fill="#171C17">• Redeem points via SmartBuy for up to 5x value on flights and hotels</text>
+    <text x="368" y="518" font-size="13" fill="#171C17">• Spend ₹5,00,000 a year to unlock the next milestone voucher</text>
+
+    <!-- Save button -->
+    <rect x="352" y="560" width="560" height="44" rx="10" fill="#fff" stroke="#DBDFD5" stroke-width="1.5"/>
+    <text x="632" y="587" text-anchor="middle" font-size="13.5" font-weight="700" fill="#171C17">Save this card</text>
+  </g>
+</svg>
