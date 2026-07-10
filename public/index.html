@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Card benefits finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+<style>
+  :root {
+    --paper: #F3F5F0;
+    --surface: #FFFFFF;
+    --surface-muted: #EAEDE6;
+    --border: #DBDFD5;
+    --ink: #171C17;
+    --ink-secondary: #565F55;
+    --ink-muted: #8B948A;
+    --brass: #A8781F;
+    --brass-deep: #7A5817;
+    --brass-bg: #FBF3E3;
+    --teal: #205C52;
+    --teal-deep: #143C35;
+    --teal-bg: #E7F1EE;
+    --danger: #A23A2E;
+    --danger-bg: #FBEEEC;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 2px rgba(23,28,23,0.05), 0 1px 1px rgba(23,28,23,0.04);
+    --shadow-md: 0 8px 24px rgba(23,28,23,0.08), 0 2px 6px rgba(23,28,23,0.05);
+    --font-display: 'Space Grotesk', -apple-system, sans-serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    padding: 40px 24px 64px;
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+
+  header.top { margin-bottom: 32px; }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--teal); display: flex; gap: 22px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .eyebrow span { display: flex; align-items: center; gap: 7px; }
+  .eyebrow b {
+    color: var(--surface); background: var(--teal); width: 18px; height: 18px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: 10px;
+  }
+  h1 {
+    font-family: var(--font-display); font-size: 38px; font-weight: 700; margin: 0 0 10px;
+    letter-spacing: -0.02em; line-height: 1.1;
+  }
+  p.sub { color: var(--ink-secondary); font-size: 16.5px; margin: 0 0 28px; max-width: 62ch; line-height: 1.6; }
+
+  .mode-row {
+    display: inline-flex; flex-wrap: wrap; padding: 4px; background: var(--surface-muted); border-radius: 999px; margin-bottom: 28px;
+    border: 1px solid var(--border); gap: 2px;
+  }
+  button.mode {
+    padding: 10px 20px; border-radius: 999px; border: none; background: transparent; cursor: pointer;
+    font-size: 14.5px; font-weight: 600; color: var(--ink-secondary); font-family: var(--font-body);
+    transition: background 0.18s ease, color 0.18s ease; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  }
+  button.mode i { font-size: 16px; }
+  button.mode:hover { color: var(--ink); }
+  button.mode.active { background: var(--ink); color: #fff; }
+
+  .layout { display: grid; grid-template-columns: 320px 1fr; gap: 32px; align-items: start; }
+  .compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .sticky-col { position: sticky; top: 24px; }
+
+  .picker {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 22px; margin-bottom: 16px; box-shadow: var(--shadow-sm);
+  }
+  .picker-label-row {
+    font-size: 12px; color: var(--ink-muted); margin-bottom: 12px; font-weight: 600; letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  label { font-size: 13.5px; color: var(--ink-secondary); display: block; margin-bottom: 6px; font-weight: 600; }
+  .field-group { margin-bottom: 16px; }
+  .field-group:last-child { margin-bottom: 0; }
+  select, input[type=text] {
+    width: 100%; padding: 12px 14px; border-radius: var(--radius); border: 1.5px solid var(--border);
+    background: var(--surface); font-size: 15px; color: var(--ink); font-family: var(--font-body);
+    transition: border-color 0.15s ease;
+  }
+  select:hover, input[type=text]:hover { border-color: var(--ink-muted); }
+  select:focus, input[type=text]:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-bg); }
+
+  .variant-combo { position: relative; }
+  .variant-dropdown {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface);
+    border: 1.5px solid var(--border); border-radius: var(--radius); max-height: 240px; overflow-y: auto;
+    z-index: 30; box-shadow: var(--shadow-md);
+  }
+  .variant-option { padding: 10px 14px; font-size: 14px; cursor: pointer; color: var(--ink); }
+  .variant-option:hover, .variant-option.highlighted { background: var(--surface-muted); }
+  .variant-empty { padding: 10px 14px; font-size: 12.5px; color: var(--ink-muted); }
+  button.primary {
+    width: 100%; padding: 14px; border-radius: var(--radius); border: none;
+    background: var(--teal); color: #fff; font-size: 15.5px; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+    transition: background 0.15s ease, transform 0.1s ease; box-shadow: var(--shadow-sm);
+  }
+  button.primary:hover { background: var(--teal-deep); }
+  button.primary:active { transform: scale(0.98); }
+
+  .bin-toggle {
+    display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--teal); cursor: pointer;
+    font-weight: 600; margin-top: 2px; background: none; border: none; padding: 6px 0; font-family: var(--font-body);
+  }
+  .bin-toggle:hover { color: var(--teal-deep); }
+  .bin-toggle i { font-size: 15px; transition: transform 0.2s ease; }
+  .bin-toggle.open i { transform: rotate(180deg); }
+  .bin-field { display: none; margin-top: 10px; }
+  .bin-field.open { display: block; }
+
+  .card-mock {
+    border-radius: var(--radius-lg); padding: 24px 26px; color: #fff; margin-bottom: 18px;
+    min-height: 160px; display: flex; flex-direction: column; justify-content: space-between;
+    background: var(--ink); box-shadow: var(--shadow-md);
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 14px);
+    transition: background-color 0.3s ease;
+  }
+  .card-mock-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .card-mock-bank { font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.8; font-weight: 500; }
+  .card-mock-network {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; padding: 4px 10px;
+    border-radius: 6px; background: rgba(255,255,255,0.18); font-weight: 500;
+  }
+  .card-mock-variant { font-family: var(--font-display); font-size: 23px; font-weight: 700; line-height: 1.2; margin: 14px 0; }
+  .card-mock-bottom { display: flex; justify-content: space-between; align-items: flex-end; font-size: 12.5px; opacity: 0.85; }
+  .card-mock-dots { font-family: var(--font-mono); letter-spacing: 2px; }
+  .card-mock-chip {
+    width: 32px; height: 24px; border-radius: 5px; background: rgba(255,255,255,0.25);
+    margin-bottom: 10px; position: relative; overflow: hidden;
+  }
+  .card-mock-chip::before, .card-mock-chip::after {
+    content: ''; position: absolute; background: rgba(0,0,0,0.15);
+  }
+  .card-mock-chip::before { top: 33%; left: 0; right: 0; height: 1px; }
+  .card-mock-chip::after { left: 33%; top: 0; bottom: 0; width: 1px; }
+
+  .results-empty {
+    color: var(--ink-secondary); font-size: 15px; padding: 56px 28px; text-align: center;
+    background: var(--surface); border: 1.5px dashed var(--border); border-radius: var(--radius-lg);
+  }
+  .results-empty i { font-size: 28px; color: var(--ink-muted); display: block; margin-bottom: 10px; }
+
+  @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .card-result {
+    border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; background: var(--surface);
+    box-shadow: var(--shadow-sm); animation: fadeSlideIn 0.35s ease;
+  }
+  .card-result-header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .card-result-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .card-title { font-family: var(--font-display); font-size: 21px; font-weight: 700; }
+  .card-sub { font-size: 13.5px; color: var(--ink-secondary); margin: 2px 0 18px 22px; }
+  .welcome-pill {
+    background: var(--teal-bg); color: var(--teal-deep); font-size: 13.5px; font-weight: 600;
+    padding: 10px 14px; border-radius: var(--radius); margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+  }
+  .welcome-pill i { font-size: 16px; flex-shrink: 0; }
+
+  .fee-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 18px; }
+  .fee-cell { background: var(--surface-muted); border-radius: var(--radius); padding: 12px 14px; }
+  .fee-cell .fee-label {
+    font-size: 11px; color: var(--ink-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.03em;
+    font-weight: 600;
+  }
+  .fee-cell .fee-value { font-family: var(--font-mono); font-size: 14.5px; color: var(--ink); font-weight: 500; }
+
+  .section-title {
+    font-size: 12.5px; font-weight: 700; margin: 22px 0 10px; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--ink-secondary); display: flex; align-items: center; gap: 8px;
+  }
+  .section-title:first-of-type { margin-top: 4px; }
+  .section-title i { font-size: 16px; color: var(--brass); }
+  ul.benefit-list { margin: 0; padding-left: 0; list-style: none; font-size: 15px; color: var(--ink); line-height: 1.7; }
+  ul.benefit-list li { padding-left: 20px; position: relative; margin-bottom: 4px; }
+  ul.benefit-list li::before { content: '\2022'; position: absolute; left: 4px; color: var(--brass); font-weight: 700; }
+
+  .callout { border-left: 3px solid var(--teal); padding: 14px 16px; border-radius: 0 var(--radius) var(--radius) 0; font-size: 14.5px; margin: 18px 0; background: var(--teal-bg); line-height: 1.6; }
+  .callout-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; color: var(--teal-deep); display: flex; align-items: center; gap: 6px; }
+  .callout-title i { font-size: 15px; }
+  .callout ul { margin: 4px 0 0; padding-left: 18px; }
+  .callout ul li { margin-bottom: 3px; }
+  .callout.maximize { border-left-color: var(--brass); background: var(--brass-bg); }
+  .callout.maximize .callout-title { color: var(--brass-deep); }
+  .callout.network { border-left-color: var(--ink-muted); background: var(--surface-muted); }
+  .callout.network .callout-title { color: var(--ink-secondary); }
+
+  details.fine-print {
+    margin-top: 20px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+  }
+  details.fine-print summary {
+    padding: 13px 16px; cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--ink-secondary);
+    background: var(--surface-muted); list-style: none; display: flex; align-items: center; justify-content: space-between;
+    user-select: none;
+  }
+  details.fine-print summary::-webkit-details-marker { display: none; }
+  details.fine-print summary i { transition: transform 0.2s ease; font-size: 16px; }
+  details.fine-print[open] summary i { transform: rotate(180deg); }
+  details.fine-print .fine-print-body { padding: 4px 16px 16px; }
+
+  .tabs { display: flex; gap: 4px; border-bottom: 1.5px solid var(--border); margin-bottom: 18px; }
+  .tab-btn {
+    padding: 10px 4px; border: none; background: none; cursor: pointer; font-family: var(--font-body);
+    font-size: 13.5px; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid transparent;
+    margin-bottom: -1.5px; transition: color 0.15s ease, border-color 0.15s ease; display: flex; align-items: center; gap: 6px;
+    margin-right: 18px;
+  }
+  .tab-btn i { font-size: 15px; }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+  .tab-panel { display: none; animation: fadeSlideIn 0.25s ease; }
+  .tab-panel.active { display: block; }
+  .tab-badge {
+    background: var(--surface-muted); color: var(--ink-muted); font-size: 10.5px; font-weight: 700;
+    border-radius: 999px; padding: 1px 7px; margin-left: 2px;
+  }
+  .tab-btn.active .tab-badge { background: var(--teal-bg); color: var(--teal-deep); }
+
+  .sources { font-size: 12px; color: var(--ink-muted); margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); line-height: 1.6; }
+  .sources a { color: var(--teal); }
+  .portal-link { font-size: 13px; margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+  .portal-link a { color: var(--teal); font-weight: 600; text-decoration: none; }
+  .portal-link a:hover { text-decoration: underline; }
+  .portal-link span { color: var(--ink-muted); }
+
+  .portal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 14px; }
+  .portal-note-text { font-size: 13px; color: var(--ink-secondary); line-height: 1.6; margin: 8px 0 0; max-width: 68ch; }
+  .portal-card {
+    border: 1px solid var(--border); border-left: 3px solid var(--ink-muted); border-radius: var(--radius);
+    padding: 14px 16px; background: var(--surface); display: block; color: var(--ink);
+    transition: box-shadow 0.15s ease;
+  }
+  .portal-card a { text-decoration: none; color: inherit; display: block; }
+  .portal-card:hover { box-shadow: var(--shadow-sm); }
+  .portal-card .portal-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 3px; display: flex; align-items: center; gap: 6px; }
+  .portal-card .portal-name i { font-size: 15px; }
+  .portal-card .portal-note { font-size: 12.5px; color: var(--ink-secondary); line-height: 1.5; }
+  .bin-row { display: flex; gap: 6px; margin-top: 10px; }
+  .bin-row input {
+    flex: 1; padding: 8px 10px; font-size: 12.5px; font-family: var(--font-mono);
+  }
+  .bin-row button {
+    padding: 8px 12px; font-size: 12px; border-radius: var(--radius); border: 1px solid var(--border);
+    background: var(--surface-muted); cursor: pointer; font-family: var(--font-body); color: var(--ink-secondary);
+    white-space: nowrap; font-weight: 600; transition: background 0.15s ease;
+  }
+  .bin-row button:hover { background: var(--border); }
+  .bin-saved-note { font-size: 11.5px; color: var(--teal); margin-top: 5px; height: 14px; font-weight: 500; }
+  .save-btn {
+    width: 100%; margin-top: 18px; padding: 12px; font-size: 13.5px; font-weight: 600; border-radius: var(--radius);
+    border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-family: var(--font-body);
+    display: flex; align-items: center; justify-content: center; gap: 7px; transition: all 0.15s ease;
+  }
+  .save-btn i { font-size: 16px; }
+  .save-btn:hover { background: var(--surface-muted); border-color: var(--ink-muted); }
+
+  .status { color: var(--ink-secondary); font-size: 15px; padding: 56px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .spinner { width: 22px; height: 22px; border: 2.5px solid var(--border); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error { color: var(--danger); font-size: 14.5px; padding: 16px 18px; background: var(--danger-bg); border-radius: var(--radius); display: flex; align-items: flex-start; gap: 10px; }
+  .error i { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  .saved-wrap { margin-top: 40px; }
+  .saved-wrap > label { margin-bottom: 12px; font-size: 15px; }
+  .saved-chip {
+    font-size: 13px; padding: 9px 16px 9px 12px; border-radius: 999px; border: 1px solid var(--border);
+    background: var(--surface); cursor: pointer; margin: 0 8px 8px 0; display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-body); color: var(--ink); font-weight: 500; transition: all 0.15s ease;
+  }
+  .saved-chip:hover { border-color: var(--ink-muted); box-shadow: var(--shadow-sm); }
+  .saved-chip .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .saved-empty { font-size: 13.5px; color: var(--ink-muted); }
+
+  .disclaimer {
+    font-size: 12.5px; color: var(--ink-muted); margin-top: 36px; line-height: 1.65; max-width: 72ch;
+    padding-top: 20px; border-top: 1px solid var(--border);
+  }
+
+  .chat-wrap {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 22px; box-shadow: var(--shadow-sm); margin-top: 40px;
+  }
+  .chat-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .chat-header i { font-size: 20px; color: var(--teal); }
+  .chat-header h2 { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin: 0; }
+  .chat-sub { font-size: 13.5px; color: var(--ink-secondary); margin: 4px 0 16px; }
+  .chat-suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .chat-chip {
+    font-size: 12.5px; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--border);
+    background: var(--surface-muted); cursor: pointer; font-family: var(--font-body); color: var(--ink-secondary);
+    transition: all 0.15s ease;
+  }
+  .chat-chip:hover { border-color: var(--teal); color: var(--teal-deep); }
+  .chat-messages { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; max-height: 480px; overflow-y: auto; }
+  .chat-msg { max-width: 82%; padding: 12px 15px; border-radius: 14px; font-size: 14.5px; line-height: 1.6; animation: fadeSlideIn 0.25s ease; }
+  .chat-msg.user { align-self: flex-end; background: var(--teal); color: #fff; border-bottom-right-radius: 4px; }
+  .chat-msg.assistant { align-self: flex-start; background: var(--surface-muted); color: var(--ink); border-bottom-left-radius: 4px; }
+  .chat-msg.assistant .chat-sources { font-size: 11px; color: var(--ink-muted); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); line-height: 1.6; }
+  .chat-msg.assistant .chat-sources a { color: var(--teal); }
+  .chat-msg.loading { display: flex; align-items: center; gap: 10px; color: var(--ink-secondary); }
+  .chat-msg.error-msg { background: var(--danger-bg); color: var(--danger); }
+  .chat-input-row { display: flex; gap: 8px; }
+  .chat-input-row input {
+    flex: 1; padding: 12px 14px; border-radius: var(--radius); border: 1.5px solid var(--border);
+    font-size: 15px; font-family: var(--font-body);
+  }
+  .chat-input-row input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-bg); }
+  .chat-input-row button {
+    padding: 0 20px; border-radius: var(--radius); border: none; background: var(--teal); color: #fff;
+    font-size: 14.5px; font-weight: 600; cursor: pointer; font-family: var(--font-body); display: flex; align-items: center; gap: 6px;
+    transition: background 0.15s ease;
+  }
+  .chat-input-row button:hover { background: var(--teal-deep); }
+  .chat-input-row button:disabled { background: var(--ink-muted); cursor: not-allowed; }
+  .chat-input-row button i { font-size: 17px; }
+
+  .salary-panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 22px; box-shadow: var(--shadow-sm); max-width: 480px; margin: 0 auto 24px;
+  }
+  .salary-panel .field-group { margin-bottom: 16px; }
+  .salary-panel .field-group:last-of-type { margin-bottom: 0; }
+  .salary-results { display: flex; flex-direction: column; gap: 14px; }
+  .salary-account-card {
+    border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; background: var(--surface);
+    box-shadow: var(--shadow-sm); animation: fadeSlideIn 0.3s ease;
+  }
+  .salary-account-rank {
+    display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px;
+    border-radius: 50%; background: var(--teal); color: #fff; font-size: 12px; font-weight: 700;
+    font-family: var(--font-mono); margin-right: 10px; flex-shrink: 0;
+  }
+  .salary-account-title-row { display: flex; align-items: center; margin-bottom: 4px; }
+  .salary-account-name { font-family: var(--font-display); font-size: 17px; font-weight: 700; }
+  .salary-account-bank { font-size: 13px; color: var(--ink-secondary); margin: 0 0 12px 34px; }
+  .salary-min { font-size: 12.5px; color: var(--ink-muted); margin: 0 0 12px 34px; }
+  .salary-min b { color: var(--ink-secondary); font-weight: 600; }
+  .salary-why {
+    margin: 0 0 14px 34px; font-size: 13.5px; color: var(--ink); background: var(--teal-bg);
+    padding: 10px 13px; border-radius: var(--radius); line-height: 1.55;
+  }
+  .salary-benefits { margin: 0 0 0 34px; padding-left: 18px; font-size: 14px; line-height: 1.7; color: var(--ink); }
+  .salary-debit { font-size: 12.5px; color: var(--ink-secondary); margin: 10px 0 0 34px; }
+  .salary-tips {
+    border-left: 3px solid var(--brass); background: var(--brass-bg); border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 14px 16px; margin-top: 4px;
+  }
+  .salary-tips .callout-title { color: var(--brass-deep); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .salary-tips ul { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.6; }
+
+  .apply-link {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 10px 16px;
+    border-radius: var(--radius); background: var(--ink); color: #fff; font-size: 13.5px; font-weight: 600;
+    text-decoration: none; transition: background 0.15s ease;
+  }
+  .apply-link:hover { background: var(--teal-deep); }
+  .apply-link i { font-size: 16px; }
+
+  .fee-tracker { margin: 14px 0; padding: 14px 16px; background: var(--surface-muted); border-radius: var(--radius); }
+  .fee-tracker-label { font-size: 12px; color: var(--ink-secondary); font-weight: 600; margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .fee-tracker-bar { height: 8px; background: var(--border); border-radius: 999px; overflow: hidden; margin-bottom: 8px; }
+  .fee-tracker-fill { height: 100%; background: var(--teal); border-radius: 999px; transition: width 0.3s ease; }
+  .fee-tracker-fill.done { background: var(--brass); }
+  .fee-tracker input {
+    width: 100%; padding: 8px 10px; font-size: 13px; border-radius: var(--radius); border: 1.5px solid var(--border);
+  }
+  .fee-tracker-note { font-size: 11.5px; color: var(--ink-muted); margin-top: 6px; }
+
+  .add-card-btn {
+    border: 1.5px dashed var(--border); border-radius: var(--radius-lg); background: none; cursor: pointer;
+    color: var(--ink-secondary); font-family: var(--font-body); font-size: 14px; font-weight: 600;
+    padding: 40px 16px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    transition: all 0.15s ease; min-height: 300px; justify-content: center;
+  }
+  .add-card-btn:hover { border-color: var(--teal); color: var(--teal-deep); background: var(--teal-bg); }
+  .add-card-btn i { font-size: 24px; }
+  .remove-card-btn {
+    font-size: 12px; color: var(--ink-muted); background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 4px; margin-bottom: 8px; font-family: var(--font-body);
+  }
+  .remove-card-btn:hover { color: var(--danger); }
+
+  .chart-wrap {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 22px; box-shadow: var(--shadow-sm); margin: 20px 0;
+  }
+  .chart-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+  .chart-row { margin-bottom: 14px; }
+  .chart-row:last-child { margin-bottom: 0; }
+  .chart-row-label { font-size: 12.5px; color: var(--ink-secondary); margin-bottom: 6px; font-weight: 600; }
+  .chart-bars { display: flex; flex-direction: column; gap: 6px; }
+  .chart-bar-item { display: flex; align-items: center; gap: 10px; }
+  .chart-bar-name { font-size: 12px; color: var(--ink); width: 110px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chart-bar-track { flex: 1; height: 18px; background: var(--surface-muted); border-radius: 4px; overflow: hidden; }
+  .chart-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+  .chart-bar-value { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-secondary); width: 70px; text-align: right; flex-shrink: 0; }
+  .chart-empty { font-size: 12.5px; color: var(--ink-muted); }
+
+  .export-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .export-btn {
+    font-size: 12.5px; padding: 8px 14px; border-radius: var(--radius); border: 1px solid var(--border);
+    background: var(--surface); cursor: pointer; font-family: var(--font-body); color: var(--ink-secondary);
+    display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s ease;
+  }
+  .export-btn:hover { border-color: var(--ink-muted); background: var(--surface-muted); }
+  .export-btn i { font-size: 14px; }
+
+  .quiz-panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 22px; box-shadow: var(--shadow-sm); max-width: 480px; margin: 0 auto 24px;
+  }
+  .quiz-panel .field-group { margin-bottom: 16px; }
+  .quiz-panel .field-group:last-of-type { margin-bottom: 0; }
+
+  @media (max-width: 760px) {
+    body { padding: 24px 16px 48px; }
+    h1 { font-size: 28px; }
+    .layout { grid-template-columns: 1fr; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .sticky-col { position: static; }
+    .eyebrow { gap: 12px; font-size: 10.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">
+      <span><b>1</b> Bank</span>
+      <span><b>2</b> Card type</span>
+      <span><b>3</b> Network</span>
+      <span><b>4</b> Variant</span>
+    </div>
+    <h1>Card benefits finder</h1>
+    <p class="sub">Pick a bank, card type, and network to see the matching cards, then find their current benefits, fees, and eligibility in one place.</p>
+  </header>
+
+  <div class="mode-row">
+    <button class="mode active" id="modeSingle"><i class="ti ti-credit-card"></i>Look up one card</button>
+    <button class="mode" id="modeCompare"><i class="ti ti-arrows-left-right"></i>Compare cards</button>
+    <button class="mode" id="modeSalary"><i class="ti ti-building-bank"></i>Find salary account</button>
+    <button class="mode" id="modeQuiz"><i class="ti ti-sparkles"></i>Find my ideal card</button>
+  </div>
+
+  <div id="panelSingle" class="layout">
+    <div class="sticky-col">
+      <div class="card-mock" id="mockSingle">
+        <div class="card-mock-top">
+          <div class="card-mock-bank" id="mockBankSingle">Bank</div>
+          <div class="card-mock-network" id="mockNetworkSingle">ANY</div>
+        </div>
+        <div>
+          <div class="card-mock-chip"></div>
+          <div class="card-mock-variant" id="mockVariantSingle">Variant</div>
+        </div>
+        <div class="card-mock-bottom">
+          <span id="mockTypeSingle">Credit card</span>
+          <span class="card-mock-dots" id="mockDotsSingle">•••• 1234</span>
+        </div>
+      </div>
+      <div class="picker" data-idx="0">
+        <div class="field-group">
+          <label>Bank</label>
+          <select class="bank"></select>
+        </div>
+        <div class="field-group">
+          <label>Card type</label>
+          <select class="cardType">
+            <option value="Credit Card">Credit card</option>
+            <option value="Debit Card">Debit card</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Network</label>
+          <select class="network"></select>
+        </div>
+        <div class="field-group">
+          <label>Variant</label>
+          <div class="variant-combo">
+            <input type="text" class="variant-input" placeholder="Search or type a variant" autocomplete="off" />
+            <div class="variant-dropdown" hidden></div>
+          </div>
+        </div>
+        <button type="button" class="bin-toggle"><i class="ti ti-chevron-down"></i> I have my card handy (optional)</button>
+        <div class="bin-field">
+          <label>Your card's BIN (first 6-8 digits)</label>
+          <input class="bin" type="text" inputmode="numeric" maxlength="8" placeholder="e.g. 123456" />
+        </div>
+      </div>
+      <button class="primary" id="goSingle">Find benefits</button>
+    </div>
+    <div id="resultsSingle"><div class="results-empty"><i class="ti ti-credit-card-search"></i>Pick a bank, card type, and network, then choose from the matching cards.</div></div>
+  </div>
+
+  <div id="panelCompare" class="compare-grid" style="display:none;"></div>
+  <div id="compareControls" style="display:none;">
+    <button class="primary" id="goCompare" style="margin: 18px 0;">Compare cards</button>
+    <div id="chartContainer"></div>
+    <div id="resultsCompare" class="compare-grid"></div>
+  </div>
+
+  <div id="panelSalary" style="display:none;">
+    <div class="salary-panel">
+      <div class="field-group">
+        <label>Monthly salary (in-hand)</label>
+        <select id="salaryRange">
+          <option value="Below ₹15,000 per month">Below ₹15,000/month</option>
+          <option value="₹15,000 to ₹25,000 per month">₹15,000 - ₹25,000/month</option>
+          <option value="₹25,000 to ₹50,000 per month" selected>₹25,000 - ₹50,000/month</option>
+          <option value="₹50,000 to ₹1,00,000 per month">₹50,000 - ₹1,00,000/month</option>
+          <option value="₹1,00,000 to ₹2,00,000 per month">₹1,00,000 - ₹2,00,000/month</option>
+          <option value="Above ₹2,00,000 per month">Above ₹2,00,000/month</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Preferred bank (optional)</label>
+        <select id="salaryPreferredBank"><option value="">No preference - show the best fit</option></select>
+      </div>
+      <button class="primary" id="goSalary"><i class="ti ti-search"></i> Find salary accounts</button>
+    </div>
+    <div id="resultsSalary"><div class="results-empty"><i class="ti ti-building-bank"></i>Pick your monthly salary range to see which accounts fit you best.</div></div>
+  </div>
+
+  <div id="panelQuiz" style="display:none;">
+    <div class="quiz-panel">
+      <div class="field-group">
+        <label>Where do you spend the most?</label>
+        <select id="quizSpendCategory">
+          <option value="Online shopping">Online shopping</option>
+          <option value="Dining and food delivery">Dining and food delivery</option>
+          <option value="Travel and flights">Travel and flights</option>
+          <option value="Fuel">Fuel</option>
+          <option value="Groceries and utilities">Groceries and utilities</option>
+          <option value="A mix, nothing dominant">A mix, nothing dominant</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Typical monthly card spend</label>
+        <select id="quizSpendAmount">
+          <option value="Below ₹10,000">Below ₹10,000</option>
+          <option value="₹10,000 to ₹30,000" selected>₹10,000 - ₹30,000</option>
+          <option value="₹30,000 to ₹75,000">₹30,000 - ₹75,000</option>
+          <option value="Above ₹75,000">Above ₹75,000</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Do you want airport lounge access?</label>
+        <select id="quizLounge">
+          <option value="Yes, it matters to me">Yes, it matters to me</option>
+          <option value="Not important">Not important</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Preferred network (optional)</label>
+        <select id="quizNetwork">
+          <option value="">No preference</option>
+          <option value="Visa">Visa</option>
+          <option value="Mastercard">Mastercard</option>
+          <option value="RuPay">RuPay</option>
+        </select>
+      </div>
+      <button class="primary" id="goQuiz"><i class="ti ti-sparkles"></i> Find my ideal card</button>
+    </div>
+    <div id="resultsQuiz"><div class="results-empty"><i class="ti ti-sparkles"></i>Answer a few quick questions to get matched with cards that fit your spending.</div></div>
+  </div>
+
+  <div class="saved-wrap">
+    <label>Saved cards</label>
+    <div id="savedList"></div>
+    <div class="export-row">
+      <button type="button" class="export-btn" id="exportSavedBtn"><i class="ti ti-download"></i>Export saved cards</button>
+    </div>
+  </div>
+
+  <div class="saved-wrap">
+    <label>Network offer portals</label>
+    <p class="portal-note-text">
+      Each portal verifies you with your own card's first 6-8 digits (the BIN) plus an OTP sent to that
+      card's registered mobile number, so there's no way to preview these without a real card. If you want,
+      save your own card's BIN below once, on this device only, so it's one click to copy next time.
+    </p>
+    <div class="portal-grid" id="portalGrid"></div>
+  </div>
+
+  <div class="chat-wrap">
+    <div class="chat-header"><i class="ti ti-message-circle-question"></i><h2>Ask a specific question</h2></div>
+    <p class="chat-sub">Something like "which Indian card gives free Coursera access" or "which card has the lowest forex markup." Searches across all banks, checked against live results, not guessed.</p>
+    <div class="chat-suggestions" id="chatSuggestions">
+      <button type="button" class="chat-chip">Which Indian card gives free Coursera access?</button>
+      <button type="button" class="chat-chip">Which card has the best lounge access?</button>
+      <button type="button" class="chat-chip">Which card has the lowest forex markup?</button>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Ask about a specific benefit, e.g. free OTT subscriptions" />
+      <button type="button" id="chatSend"><i class="ti ti-send"></i>Ask</button>
+    </div>
+  </div>
+
+  <p class="disclaimer">
+    Results come from a live web search each time, so always confirm fees, interest rates, and eligibility
+    on the bank's own page before applying. Data can occasionally be outdated or drawn from an unofficial source.
+    Network availability shown in the dropdown is a best-effort list, not verified live against each bank's site.
+  </p>
+</div>
+
+<script>
+const variantMap = {
+  "HDFC Bank|Credit Card": ["Millennia","MoneyBack+","Freedom","PhonePe HDFC Bank Uno","PhonePe HDFC Bank Ultimo","Infinia Metal Edition","Diners Club Black Metal Edition","PIXEL Play","PIXEL Go","HDFC Bank UPI RuPay","Regalia Gold","Diners Club Privilege","Tata Neu Infinity","Tata Neu Plus","Swiggy","Swiggy Ornge","Swiggy BLCK","Marriott Bonvoy","Indian Oil","IRCTC"],
+  "HDFC Bank|Debit Card": ["Platinum","Regular","Preferred Platinum","Classic Platinum","Womans Advantage","Titanium","Times Points","Moneyback","Infiniti","Gold"],
+  "ICICI Bank|Credit Card": ["Amazon Pay","Coral","Rubyx","Sapphiro","Emeralde","Emerald Private Metal","Diamant","Times Black","MakeMyTrip","HPCL Coral","HPCL Super Saver","Manchester United","Adani One Signature"],
+  "ICICI Bank|Debit Card": ["Coral Debit","Sapphiro Debit","Platinum Debit"],
+  "State Bank of India|Credit Card": ["SimplyCLICK","SimplySAVE","SimplySAVE UPI","Prime","Elite","Elite Advantage","Pulse","Aurum","Cashback","BPCL","BPCL Octane","Air India Signature","Air India Platinum","IRCTC","IRCTC RuPay","Etihad Guest","Central","Yatra SBI","Tata Croma","Unnati","Miles","Miles Prime","Miles Elite","Doctor's SBI Card","Vistara Signature","Vistara Prime","Reliance Prime","Titan","Lifestyle Prime"],
+  "State Bank of India|Debit Card": ["Classic","Gold","Platinum","Pride"],
+  "Axis Bank|Credit Card": ["Ace","Flipkart","My Zone","Neo","Airtel","Rewards","Privilege","Select","Magnus","Horizon","Atlas","Primus","Burgundy Private","Reserve","Vistara Signature","Vistara Prime","IndianOil","IndianOil Premium"],
+  "Axis Bank|Debit Card": ["Burgundy Debit","Priority Debit","Republic Debit","Flipkart Debit","Kisan Debit","Sampann Debit","Prestige Debit","PMJDY Debit","Delight Debit","Value Plus Debit","Online Rewards Debit"],
+  "Kotak Mahindra Bank|Credit Card": ["League Platinum","Royale Signature","White Reserve","811 Dream Different","Delight Platinum","PVR Gold","PVR Platinum","IndianOil","Myntra","IndiGo 6E Rewards","Mojo Platinum","Kotak UPI RuPay"],
+  "Kotak Mahindra Bank|Debit Card": ["Classic Debit","Privy League Signature","Platinum Debit"],
+  "RBL Bank|Credit Card": ["LUMIERE","NOVA","IRCTC RBL Bank","IndianOil RBL Bank XTRA","IndianOil RBL Bank","Aspire Banking","Signature Banking","Apex","Icon","World Safari","World Safari Lite","RBL Bank QuickPay","RBL Bank iGlobe","Platinum Maxima Plus","Platinum Maxima","Platinum Delight","ShopRite","Cookies","RBL Bank Play","RBL Bank SalarySe UP","TVS Credit RBL Bank Gold","TVS Credit RBL Bank","RBL Bank DMI Finance","RBL Bank Patanjali Vishisht","RBL Bank Patanjali Swarn","RBL Bank Bankbazaar SaveMax","RBL Bank Bankbazaar SaveMax Pro","RBL Bank MoneyTap Black","RBL Bank MoneyTap","RBL Bank Paisabazaar Duet","RBL Bank Paisabazaar Duet Plus","Insignia Preferred Banking","Monthly Treats","RBL Bank Popcorn","RBL Bank Movies and More","RBL Bank Blockbuster","Titanium Delight","RBL Bank Fun+","MoCash","Platinum LifeEasy","Platinum Edge","Platinum ShopDaily","Platinum Plus","World Prime","Platinum TravelEasy","Platinum ShopSmart","Platinum ValuePlus","Platinum Max","World Max","Platinum Classic","Platinum Prime","Platinum Bonus","Platinum Shopgain","Binge","MyFirst","EasySaver","Platinum Advantage","World Plus","Platinum Choice"],
+  "RBL Bank|Debit Card": ["Titanium Debit","Platinum Debit"],
+  "Canara Bank|Credit Card": ["Visa Signature","Rupay Select","Mastercard World","Visa Platinum","Rupay Select Secured","Mastercard Platinum","Rupay Platinum","Mastercard Gold","Visa Gold","Rupay Platinum Secured","Mastercard Gold Secured","Visa Gold Secured","Rupay Classic","Mastercard Standard","Visa Classic"],
+  "Canara Bank|Debit Card": ["Classic Debit","Platinum Debit"],
+  "IndusInd Bank|Credit Card": ["Platinum RuPay","Legend","EazyDiner","EazyDiner Platinum","Platinum Aura Edge","Platinum Visa","Pinnacle","Nexxt","Tiger","Samman","Avios Visa Infinite"],
+  "IndusInd Bank|Debit Card": ["Platinum Debit","EasyAccess Debit","Pioneer Debit"],
+  "Yes Bank|Credit Card": ["Marquee","Private","Prime","Elite+","Reserv","POP Club","First Preferred","Klick","SELECT","FinBooster","First Business","Paisabazaar PaisaSave","ACE"],
+  "Yes Bank|Debit Card": ["Prosperity Debit","Elite Debit","Classic Debit"],
+  "IDFC FIRST Bank|Credit Card": ["FIRST Millennia","FIRST Classic","FIRST Select","FIRST Wealth","FIRST WOW!","FIRST WOW! Black","FIRST SWYP","FIRST EARN","FIRST Power","FIRST Power+","LIC Classic","LIC Select","FIRST Private","Ashva","Mayura","Gaj","Diamond Reserve","IndiGo","Hello Cashback","FIRST Digital"],
+  "IDFC FIRST Bank|Debit Card": ["FIRST Classic Debit","FIRST Select Debit","FIRST Wealth Debit","FIRST Private Debit","Visa Signature Debit","Visa Platinum Debit","Visa Classic Debit"],
+  "Bank of Baroda|Credit Card": ["BOBCARD Eterna","BOBCARD Prime","BOBCARD Select","BOBCARD Tiara","BOBCARD Easy","BOBCARD Premier","BOBCARD Cashback","BOBCARD One","IRCTC RuPay","HPCL Energie","ICAI Exclusive","ICSI Diamond","CMA One","Vikram","Yoddha","Sentinel"],
+  "Bank of Baroda|Debit Card": ["Classic Debit","Platinum Debit","RuPay Select Debit"],
+  "Punjab National Bank|Credit Card": ["Global Classic","Global Gold","Global Platinum","Global Select","Visa Signature","RuPay Platinum","RuPay Select","RuPay Millennial","Rakshak","EaseMyTrip RuPay Platinum","Patanjali RuPay Select","Luxura Metal"],
+  "Punjab National Bank|Debit Card": ["RuPay Select Neo","RuPay Select Excel","RuPay Select Optima","RuPay Select Imperial","RuPay Select Rakshak","RuPay Select Government Imperial","RuPay Select Government Optima","RuPay Select Government Excel","Mastercard World Grand"],
+  "Standard Chartered|Credit Card": ["Rewards","Platinum Rewards","Ultimate","EaseMyTrip"],
+  "Standard Chartered|Debit Card": ["Corporate Debit","Priority Banking Debit"],
+  "American Express India|Credit Card": ["Membership Rewards","Platinum Travel","Platinum Reserve","SmartEarn"]
+};
+const genericFallback = ["Classic","Gold","Platinum","Signature","Business"];
+const banks = ["HDFC Bank","ICICI Bank","State Bank of India","Axis Bank","Kotak Mahindra Bank","IndusInd Bank","Yes Bank","IDFC FIRST Bank","Bank of Baroda","Punjab National Bank","Standard Chartered","American Express India","RBL Bank","Canara Bank"];
+const networks = ["Any / not sure","Visa","Mastercard","RuPay","American Express","Diners Club"];
+const networkAvailability = {
+  "HDFC Bank|Credit Card|Regalia Gold": ["Visa","Mastercard"],
+  "HDFC Bank|Credit Card|Diners Club Black Metal Edition": ["Diners Club","Mastercard"],
+  "HDFC Bank|Credit Card|Diners Club Privilege": ["Diners Club","Mastercard"],
+  "HDFC Bank|Credit Card|Infinia Metal Edition": ["Visa","Mastercard"],
+  "HDFC Bank|Credit Card|Millennia": ["Visa","Mastercard","RuPay"],
+  "HDFC Bank|Credit Card|MoneyBack+": ["Visa","Mastercard","RuPay"],
+  "HDFC Bank|Credit Card|Freedom": ["Visa","RuPay"],
+  "HDFC Bank|Credit Card|Tata Neu Infinity": ["Visa","RuPay"],
+  "HDFC Bank|Credit Card|Tata Neu Plus": ["Visa","RuPay"],
+  "HDFC Bank|Credit Card|Swiggy": ["Visa"],
+  "HDFC Bank|Credit Card|HDFC Bank UPI RuPay": ["RuPay"],
+  "ICICI Bank|Credit Card|Amazon Pay": ["Visa"],
+  "ICICI Bank|Credit Card|Coral": ["Visa","Mastercard","RuPay"],
+  "ICICI Bank|Credit Card|Rubyx": ["Visa","Mastercard","RuPay"],
+  "ICICI Bank|Credit Card|Sapphiro": ["Visa","Mastercard","RuPay"],
+  "ICICI Bank|Credit Card|Emeralde": ["Visa","Mastercard","American Express"],
+  "ICICI Bank|Credit Card|Emerald Private Metal": ["Visa","Mastercard"],
+  "ICICI Bank|Credit Card|Times Black": ["Visa","Mastercard"],
+  "ICICI Bank|Credit Card|MakeMyTrip": ["Mastercard","RuPay"],
+  "ICICI Bank|Credit Card|HPCL Super Saver": ["Visa","Mastercard","RuPay"],
+  "State Bank of India|Credit Card|SimplyCLICK": ["Visa","Mastercard","RuPay"],
+  "State Bank of India|Credit Card|Aurum": ["Mastercard","RuPay"],
+  "State Bank of India|Credit Card|SimplySAVE": ["Visa","Mastercard","RuPay"],
+  "State Bank of India|Credit Card|Prime": ["Visa","Mastercard"],
+  "State Bank of India|Credit Card|Elite": ["Visa","Mastercard"],
+  "State Bank of India|Credit Card|Cashback": ["Visa","Mastercard"],
+  "State Bank of India|Credit Card|BPCL": ["Visa","Mastercard"],
+  "Axis Bank|Credit Card|Ace": ["Visa","RuPay"],
+  "Axis Bank|Credit Card|Flipkart": ["Visa","Mastercard"],
+  "Axis Bank|Credit Card|Magnus": ["Visa","Mastercard","RuPay"],
+  "Axis Bank|Credit Card|My Zone": ["Visa","Mastercard"],
+  "Axis Bank|Credit Card|Neo": ["Mastercard","RuPay"],
+  "Axis Bank|Credit Card|Airtel": ["Visa","RuPay"],
+  "Axis Bank|Credit Card|Rewards": ["Mastercard"],
+  "Axis Bank|Credit Card|Privilege": ["Mastercard"],
+  "Axis Bank|Credit Card|Select": ["Mastercard"],
+  "Axis Bank|Credit Card|Horizon": ["Visa"],
+  "Axis Bank|Credit Card|Atlas": ["Visa"],
+  "Axis Bank|Credit Card|Primus": ["Visa"],
+  "Axis Bank|Credit Card|Burgundy Private": ["Visa","Mastercard"],
+  "Axis Bank|Credit Card|Reserve": ["Visa"],
+  "Axis Bank|Credit Card|Vistara Signature": ["Visa"],
+  "Axis Bank|Credit Card|Vistara Prime": ["Visa"],
+  "Axis Bank|Credit Card|IndianOil": ["Visa","RuPay"],
+  "Axis Bank|Credit Card|IndianOil Premium": ["Visa"],
+  "Kotak Mahindra Bank|Credit Card|League Platinum": ["Visa","Mastercard"],
+  "Kotak Mahindra Bank|Credit Card|Royale Signature": ["Visa","Mastercard"],
+  "Kotak Mahindra Bank|Credit Card|White Reserve": ["Visa","Mastercard"],
+  "Kotak Mahindra Bank|Credit Card|811 Dream Different": ["Visa","RuPay"],
+  "Kotak Mahindra Bank|Credit Card|Kotak UPI RuPay": ["RuPay"],
+  "RBL Bank|Credit Card|World Safari": ["Visa","Mastercard","RuPay"],
+  "RBL Bank|Credit Card|ShopRite": ["Visa","Mastercard","RuPay"],
+  "RBL Bank|Credit Card|Insignia Preferred Banking": ["Visa","Mastercard"],
+  "RBL Bank|Credit Card|RBL Bank Play": ["RuPay"],
+  "Canara Bank|Credit Card|Visa Signature": ["Visa"],
+  "Canara Bank|Credit Card|Rupay Select": ["RuPay"],
+  "Canara Bank|Credit Card|Mastercard World": ["Mastercard"],
+  "Canara Bank|Credit Card|Visa Platinum": ["Visa"],
+  "Canara Bank|Credit Card|Rupay Select Secured": ["RuPay"],
+  "Canara Bank|Credit Card|Mastercard Platinum": ["Mastercard"],
+  "Canara Bank|Credit Card|Rupay Platinum": ["RuPay"],
+  "Canara Bank|Credit Card|Mastercard Gold": ["Mastercard"],
+  "Canara Bank|Credit Card|Visa Gold": ["Visa"],
+  "Canara Bank|Credit Card|Rupay Platinum Secured": ["RuPay"],
+  "Canara Bank|Credit Card|Mastercard Gold Secured": ["Mastercard"],
+  "Canara Bank|Credit Card|Visa Gold Secured": ["Visa"],
+  "Canara Bank|Credit Card|Rupay Classic": ["RuPay"],
+  "Canara Bank|Credit Card|Mastercard Standard": ["Mastercard"],
+  "Canara Bank|Credit Card|Visa Classic": ["Visa"],
+  "IndusInd Bank|Credit Card|Pinnacle": ["Visa","Mastercard"],
+  "IndusInd Bank|Credit Card|Legend": ["Visa","Mastercard","RuPay"],
+  "IndusInd Bank|Credit Card|EazyDiner": ["Visa","Mastercard"],
+  "IndusInd Bank|Credit Card|EazyDiner Platinum": ["Visa","Mastercard"],
+  "IndusInd Bank|Credit Card|Platinum Aura Edge": ["Visa","Mastercard"],
+  "IndusInd Bank|Credit Card|Platinum RuPay": ["RuPay"],
+  "IndusInd Bank|Credit Card|Platinum Visa": ["Visa"],
+  "IndusInd Bank|Credit Card|Nexxt": ["Visa","Mastercard"],
+  "IndusInd Bank|Credit Card|Tiger": ["Visa","Mastercard"],
+  "IndusInd Bank|Credit Card|Samman": ["Visa","Mastercard"],
+  "IndusInd Bank|Credit Card|Avios Visa Infinite": ["Visa"],
+  "Yes Bank|Credit Card|Marquee": ["Visa","Mastercard"],
+  "Yes Bank|Credit Card|Private": ["Visa","Mastercard"],
+  "Yes Bank|Credit Card|Prime": ["Visa","Mastercard"],
+  "Yes Bank|Credit Card|Elite+": ["Visa","Mastercard"],
+  "Yes Bank|Credit Card|Reserv": ["Visa","Mastercard"],
+  "Yes Bank|Credit Card|POP Club": ["Visa","Mastercard","RuPay"],
+  "Yes Bank|Credit Card|First Preferred": ["Visa","Mastercard"],
+  "Yes Bank|Credit Card|Klick": ["RuPay"],
+  "Yes Bank|Credit Card|FinBooster": ["RuPay"],
+  "Yes Bank|Credit Card|Paisabazaar PaisaSave": ["RuPay"],
+  "Yes Bank|Credit Card|SELECT": ["Visa","Mastercard"],
+  "IDFC FIRST Bank|Credit Card|FIRST Millennia": ["Visa","Mastercard","RuPay"],
+  "IDFC FIRST Bank|Credit Card|FIRST Classic": ["Visa","Mastercard","RuPay"],
+  "IDFC FIRST Bank|Credit Card|FIRST Select": ["Visa","Mastercard"],
+  "IDFC FIRST Bank|Credit Card|FIRST Wealth": ["Visa","Mastercard"],
+  "IDFC FIRST Bank|Credit Card|FIRST WOW!": ["RuPay"],
+  "IDFC FIRST Bank|Credit Card|FIRST WOW! Black": ["RuPay"],
+  "IDFC FIRST Bank|Credit Card|LIC Classic": ["Mastercard"],
+  "IDFC FIRST Bank|Credit Card|LIC Select": ["Mastercard"],
+  "IDFC FIRST Bank|Credit Card|IndiGo": ["Mastercard","RuPay"],
+  "IDFC FIRST Bank|Credit Card|Ashva": ["Visa","Mastercard"],
+  "IDFC FIRST Bank|Credit Card|Mayura": ["Visa","Mastercard"],
+  "IDFC FIRST Bank|Credit Card|FIRST Private": ["Visa","Mastercard"],
+  "IDFC FIRST Bank|Credit Card|FIRST SWYP": ["Visa","Mastercard","RuPay"],
+  "Bank of Baroda|Credit Card|BOBCARD Eterna": ["Visa","Mastercard","RuPay"],
+  "Bank of Baroda|Credit Card|BOBCARD Prime": ["Visa","Mastercard","RuPay"],
+  "Bank of Baroda|Credit Card|BOBCARD Select": ["Visa","Mastercard"],
+  "Bank of Baroda|Credit Card|BOBCARD Tiara": ["Visa","Mastercard","RuPay"],
+  "Bank of Baroda|Credit Card|BOBCARD Easy": ["Visa","RuPay"],
+  "Bank of Baroda|Credit Card|IRCTC RuPay": ["RuPay"],
+  "Punjab National Bank|Credit Card|Global Classic": ["Visa"],
+  "Punjab National Bank|Credit Card|Global Gold": ["Visa"],
+  "Punjab National Bank|Credit Card|Global Platinum": ["Visa"],
+  "Punjab National Bank|Credit Card|Global Select": ["Visa"],
+  "Punjab National Bank|Credit Card|Visa Signature": ["Visa"],
+  "Punjab National Bank|Credit Card|RuPay Platinum": ["RuPay"],
+  "Punjab National Bank|Credit Card|RuPay Select": ["RuPay"],
+  "Punjab National Bank|Credit Card|RuPay Millennial": ["RuPay"],
+  "Punjab National Bank|Credit Card|Rakshak": ["RuPay"],
+  "Punjab National Bank|Credit Card|EaseMyTrip RuPay Platinum": ["RuPay"],
+  "Punjab National Bank|Credit Card|Patanjali RuPay Select": ["RuPay"],
+  "Punjab National Bank|Credit Card|Luxura Metal": ["RuPay","Visa"],
+  "Punjab National Bank|Debit Card|RuPay Select Neo": ["RuPay"],
+  "Punjab National Bank|Debit Card|RuPay Select Excel": ["RuPay"],
+  "Punjab National Bank|Debit Card|RuPay Select Optima": ["RuPay"],
+  "Punjab National Bank|Debit Card|RuPay Select Imperial": ["RuPay"],
+  "Punjab National Bank|Debit Card|RuPay Select Rakshak": ["RuPay"],
+  "Punjab National Bank|Debit Card|RuPay Select Government Imperial": ["RuPay"],
+  "Punjab National Bank|Debit Card|RuPay Select Government Optima": ["RuPay"],
+  "Punjab National Bank|Debit Card|RuPay Select Government Excel": ["RuPay"],
+  "Punjab National Bank|Debit Card|Mastercard World Grand": ["Mastercard"],
+  "Standard Chartered|Credit Card|Rewards": ["Visa","Mastercard"],
+  "Standard Chartered|Credit Card|Platinum Rewards": ["Visa","Mastercard"],
+  "Standard Chartered|Credit Card|Ultimate": ["Visa","Mastercard"],
+  "Standard Chartered|Credit Card|EaseMyTrip": ["Visa","Mastercard"],
+  "American Express India|Credit Card|Membership Rewards": ["American Express"],
+  "American Express India|Credit Card|Platinum Travel": ["American Express"],
+  "American Express India|Credit Card|Platinum Reserve": ["American Express"],
+  "American Express India|Credit Card|SmartEarn": ["American Express"]
+};
+function networksFor(bank, cardType, variant) {
+  const known = networkAvailability[bank + '|' + cardType + '|' + variant];
+  if (known) return known;
+  if (bank === 'RBL Bank' && cardType === 'Credit Card') return ["Visa","Mastercard","RuPay"];
+  return cardType === 'Debit Card' ? ["Visa","Mastercard","RuPay"] : ["Visa","Mastercard"];
+}
+
+const tierKeywords = {
+  super: ['metal','black','infinite','private','signature','pinnacle','celesta','emeralde','luxura','reserve','reserv','mayura','ashva','magnus','infinia'],
+  premium: ['gold','regalia','millennia','legend','eterna','select','wealth','sapphiro','elite','marquee'],
+  mid: ['platinum','prime','classic','rubyx','coral']
+};
+function tierFor(variant) {
+  const v = (variant || '').toLowerCase();
+  if (tierKeywords.super.some(k => v.includes(k))) return 'super';
+  if (tierKeywords.premium.some(k => v.includes(k))) return 'premium';
+  if (tierKeywords.mid.some(k => v.includes(k))) return 'mid';
+  return 'entry';
+}
+const tierColors = { entry: '#5C6B62', mid: '#205C52', premium: '#A8781F', super: '#171C17' };
+const networkColors = {
+  'Visa': '#1A3E8C', 'Mastercard': '#B23A2E', 'RuPay': '#0F7A4A',
+  'American Express': '#5B4A8A', 'Diners Club': '#3A3F44', '': '#5C6B62'
+};
+const networkPortals = {
+  'Visa': { url: 'https://www.visa.co.in/en_in/visa-offers-and-perks/', note: 'Visa Offers and Perks' },
+  'Mastercard': { url: 'https://www.mastercard.co.in/en-in/personal/offers-and-promotions.html', note: 'Mastercard offers and priceless specials' },
+  'RuPay': { url: 'https://rupayselect.truztee.com/#/offers', note: 'RuPay Select benefits (Select-tier cards only)' },
+  'American Express': { url: 'https://www.americanexpress.com/en-in/benefits/amex-offers/offers/', note: 'Amex Offers' },
+  'Diners Club': { url: 'https://dinersclub-offerplatform.com/', note: 'Diners Club Offers Platform' }
+};
+
+function createVariantCombo(container, onChange) {
+  const input = container.querySelector('.variant-input');
+  const dropdown = container.querySelector('.variant-dropdown');
+  let options = [];
+  let value = '';
+  let highlightedIndex = -1;
+
+  function filteredOptions() {
+    const q = input.value.toLowerCase();
+    if (!q) return options;
+    return options.filter(o => o.toLowerCase().includes(q));
+  }
+
+  function renderDropdown() {
+    const filtered = filteredOptions();
+    highlightedIndex = -1;
+    if (!filtered.length) {
+      dropdown.innerHTML = '<div class="variant-empty">No match - your typed text will be used as-is.</div>';
+    } else {
+      dropdown.innerHTML = filtered.map(o => '<div class="variant-option" data-value="' + o.replace(/"/g, '&quot;') + '">' + o + '</div>').join('');
+    }
+    dropdown.hidden = false;
+  }
+
+  function updateHighlight(items) {
+    items.forEach((it, i) => it.classList.toggle('highlighted', i === highlightedIndex));
+    if (items[highlightedIndex]) items[highlightedIndex].scrollIntoView({ block: 'nearest' });
+  }
+
+  input.addEventListener('focus', renderDropdown);
+  input.addEventListener('input', renderDropdown);
+  input.addEventListener('blur', () => {
+    setTimeout(() => {
+      dropdown.hidden = true;
+      value = input.value.trim() || options[0] || '';
+      input.value = value;
+      onChange(value);
+    }, 150);
+  });
+  dropdown.addEventListener('mousedown', (e) => {
+    const item = e.target.closest('.variant-option');
+    if (!item) return;
+    value = item.dataset.value;
+    input.value = value;
+    dropdown.hidden = true;
+    onChange(value);
+  });
+  input.addEventListener('keydown', (e) => {
+    const items = Array.from(dropdown.querySelectorAll('.variant-option'));
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1);
+      updateHighlight(items);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlightedIndex = Math.max(highlightedIndex - 1, 0);
+      updateHighlight(items);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      value = (highlightedIndex >= 0 && items[highlightedIndex]) ? items[highlightedIndex].dataset.value : (input.value.trim() || value);
+      input.value = value;
+      dropdown.hidden = true;
+      onChange(value);
+      input.blur();
+    } else if (e.key === 'Escape') {
+      dropdown.hidden = true;
+      input.blur();
+    }
+  });
+
+  return {
+    setOptions(newOptions) {
+      options = newOptions;
+      if (!value || !options.includes(value)) {
+        value = options[0] || '';
+        input.value = value;
+      }
+    },
+    getValue() { return value; },
+    setValue(v) { value = v; input.value = v; }
+  };
+}
+
+function updateMock(mockEl, card) {
+  if (!mockEl) return;
+  const tier = tierFor(card.variant);
+  mockEl.style.background = tierColors[tier];
+  mockEl.querySelector('.card-mock-bank').textContent = card.bank || 'Bank';
+  mockEl.querySelector('.card-mock-variant').textContent = card.variant || 'Variant';
+  mockEl.querySelector('.card-mock-network').textContent = (card.network || 'Any network').toUpperCase();
+  mockEl.querySelector('.card-mock-network').style.background = (networkColors[card.network] || networkColors['']) ;
+  mockEl.querySelector('.card-mock-network').style.color = '#fff';
+  mockEl.querySelectorAll('[id^=mockType]').forEach(el => { el.textContent = card.cardType || 'Credit card'; });
+  const dotsEl = mockEl.querySelector('.card-mock-dots');
+  if (dotsEl) dotsEl.textContent = card.bin ? card.bin + ' •• 1234' : '•••• 1234';
+}
+
+function initPicker(root, mockEl) {
+  const bankSel = root.querySelector('.bank');
+  const typeSel = root.querySelector('.cardType');
+  const netSel = root.querySelector('.network');
+  const binInput = root.querySelector('.bin');
+  const binToggle = root.querySelector('.bin-toggle');
+  const binField = root.querySelector('.bin-field');
+  const variantCombo = createVariantCombo(root.querySelector('.variant-combo'), () => {
+    if (mockEl) updateMock(mockEl, picker.get());
+  });
+  if (binToggle && binField) {
+    binToggle.addEventListener('click', () => {
+      const isOpen = binField.classList.toggle('open');
+      binToggle.classList.toggle('open', isOpen);
+      binToggle.innerHTML = '<i class="ti ti-chevron-down"></i> ' + (isOpen ? 'Hide card BIN field' : 'I have my card handy (optional)');
+    });
+  }
+  banks.forEach(b => { const o = document.createElement('option'); o.value = b; o.textContent = b; bankSel.appendChild(o); });
+  if (netSel) networks.forEach(n => { const o = document.createElement('option'); o.value = n === 'Any / not sure' ? '' : n; o.textContent = n; netSel.appendChild(o); });
+  function refresh() {
+    const fullList = variantMap[bankSel.value + '|' + typeSel.value] || genericFallback;
+    const selectedNetwork = netSel ? netSel.value : '';
+    const filtered = selectedNetwork
+      ? fullList.filter(v => networksFor(bankSel.value, typeSel.value, v).includes(selectedNetwork))
+      : fullList;
+    variantCombo.setOptions(filtered);
+    if (binInput && selectedNetwork) {
+      const savedBin = localStorage.getItem('bin:' + selectedNetwork) || '';
+      binInput.value = savedBin;
+      if (savedBin && binField && !binField.classList.contains('open')) {
+        binField.classList.add('open');
+        if (binToggle) { binToggle.classList.add('open'); binToggle.innerHTML = '<i class="ti ti-chevron-down"></i> Hide card BIN field'; }
+      }
+    }
+    if (mockEl) updateMock(mockEl, picker.get());
+  }
+  bankSel.addEventListener('change', refresh);
+  typeSel.addEventListener('change', refresh);
+  if (netSel) netSel.addEventListener('change', refresh);
+  if (binInput) {
+    binInput.addEventListener('input', () => {
+      binInput.value = binInput.value.replace(/\D/g, '').slice(0, 8);
+      const net = netSel ? netSel.value : '';
+      if (net && binInput.value.length >= 6) localStorage.setItem('bin:' + net, binInput.value);
+      if (mockEl) updateMock(mockEl, picker.get());
+    });
+  }
+  const picker = {
+    get: () => ({
+      bank: bankSel.value,
+      cardType: typeSel.value,
+      variant: variantCombo.getValue(),
+      network: netSel ? netSel.value : '',
+      bin: binInput ? binInput.value : ''
+    }),
+    set: (bank, cardType, variant, network) => {
+      bankSel.value = bank; typeSel.value = cardType;
+      if (netSel && network !== undefined) netSel.value = network || '';
+      refresh();
+      variantCombo.setValue(variant);
+      if (mockEl) updateMock(mockEl, picker.get());
+    }
+  };
+  refresh();
+  return picker;
+}
+
+const singlePicker = initPicker(document.querySelector('#panelSingle .picker'), document.getElementById('mockSingle'));
+
+document.getElementById('modeSingle').addEventListener('click', () => setMode('single'));
+document.getElementById('modeCompare').addEventListener('click', () => setMode('compare'));
+document.getElementById('modeSalary').addEventListener('click', () => setMode('salary'));
+document.getElementById('modeQuiz').addEventListener('click', () => setMode('quiz'));
+
+let comparePickers = [];
+let salaryBankPopulated = false;
+const MAX_COMPARE = 4;
+
+function setMode(mode) {
+  document.getElementById('modeSingle').className = 'mode' + (mode === 'single' ? ' active' : '');
+  document.getElementById('modeCompare').className = 'mode' + (mode === 'compare' ? ' active' : '');
+  document.getElementById('modeSalary').className = 'mode' + (mode === 'salary' ? ' active' : '');
+  document.getElementById('modeQuiz').className = 'mode' + (mode === 'quiz' ? ' active' : '');
+
+  document.getElementById('panelSingle').style.display = mode === 'single' ? 'grid' : 'none';
+  document.getElementById('panelCompare').style.display = mode === 'compare' ? 'grid' : 'none';
+  document.getElementById('compareControls').style.display = mode === 'compare' ? 'block' : 'none';
+  document.getElementById('panelSalary').style.display = mode === 'salary' ? 'block' : 'none';
+  document.getElementById('panelQuiz').style.display = mode === 'quiz' ? 'block' : 'none';
+
+  if (mode === 'compare' && !comparePickers.length) { addCompareCard(); addCompareCard(); }
+  if (mode === 'salary' && !salaryBankPopulated) {
+    const sel = document.getElementById('salaryPreferredBank');
+    banks.forEach(b => { const o = document.createElement('option'); o.value = b; o.textContent = b; sel.appendChild(o); });
+    salaryBankPopulated = true;
+  }
+}
+
+function mockMarkup(prefix) {
+  return '<div class="card-mock" id="mock' + prefix + '">' +
+    '<div class="card-mock-top"><div class="card-mock-bank" id="mockBank' + prefix + '">Bank</div>' +
+    '<div class="card-mock-network" id="mockNetwork' + prefix + '">ANY</div></div>' +
+    '<div><div class="card-mock-chip"></div><div class="card-mock-variant" id="mockVariant' + prefix + '">Variant</div></div>' +
+    '<div class="card-mock-bottom"><span id="mockType' + prefix + '">Credit card</span><span class="card-mock-dots" id="mockDots' + prefix + '">•••• 1234</span></div></div>';
+}
+
+function pickerFieldsMarkup(label, removable) {
+  return '<div class="picker-label-row">' + label + '</div>' +
+    (removable ? '<button type="button" class="remove-card-btn"><i class="ti ti-x"></i> Remove this card</button>' : '') +
+    '<div class="field-group"><label>Bank</label><select class="bank"></select></div>' +
+    '<div class="field-group"><label>Card type</label><select class="cardType"><option value="Credit Card">Credit card</option><option value="Debit Card">Debit card</option></select></div>' +
+    '<div class="field-group"><label>Network</label><select class="network"></select></div>' +
+    '<div class="field-group"><label>Variant</label><div class="variant-combo"><input type="text" class="variant-input" placeholder="Search or type a variant" autocomplete="off"/><div class="variant-dropdown" hidden></div></div></div>' +
+    '<button type="button" class="bin-toggle"><i class="ti ti-chevron-down"></i> I have my card handy (optional)</button>' +
+    '<div class="bin-field"><label>Your card BIN (first 6-8 digits)</label><input class="bin" type="text" inputmode="numeric" maxlength="8" placeholder="e.g. 123456"/></div>';
+}
+
+function renderComparePanel() {
+  const panel = document.getElementById('panelCompare');
+  const letters = ['A', 'B', 'C', 'D'];
+  let html = '';
+  comparePickers.forEach((p, i) => {
+    html += '<div class="sticky-col" data-compare-idx="' + i + '">' + mockMarkup(letters[i]) + '<div class="picker">' + pickerFieldsMarkup('Card ' + letters[i], comparePickers.length > 2) + '</div></div>';
+  });
+  if (comparePickers.length < MAX_COMPARE) {
+    html += '<div><button type="button" class="add-card-btn" id="addCompareCardBtn"><i class="ti ti-plus"></i>Add another card to compare</button></div>';
+  }
+  panel.innerHTML = html;
+  const cols = panel.querySelectorAll('[data-compare-idx]');
+  cols.forEach((col, i) => {
+    const pickerEl = col.querySelector('.picker');
+    const mockEl = col.querySelector('.card-mock');
+    comparePickers[i].instance = initPicker(pickerEl, mockEl);
+    const removeBtn = col.querySelector('.remove-card-btn');
+    if (removeBtn) removeBtn.addEventListener('click', () => removeCompareCard(i));
+  });
+  const addBtn = document.getElementById('addCompareCardBtn');
+  if (addBtn) addBtn.addEventListener('click', addCompareCard);
+}
+
+function addCompareCard() {
+  if (comparePickers.length >= MAX_COMPARE) return;
+  comparePickers.push({ instance: null });
+  renderComparePanel();
+}
+
+function removeCompareCard(index) {
+  if (comparePickers.length <= 2) return;
+  comparePickers.splice(index, 1);
+  renderComparePanel();
+}
+
+const sectionMeta = {
+  rewards: { label: 'Rewards', icon: 'ti-gift', finePrint: false },
+  loungeAccess: { label: 'Lounge access', icon: 'ti-plane', finePrint: false },
+  milestoneBenefits: { label: 'Milestone benefits', icon: 'ti-trophy', finePrint: false },
+  otherPerks: { label: 'Other perks', icon: 'ti-sparkles', finePrint: false },
+  fuelSurcharge: { label: 'Fuel surcharge', icon: 'ti-gas-station', finePrint: true },
+  insurance: { label: 'Insurance cover', icon: 'ti-shield-check', finePrint: true },
+  forexMarkup: { label: 'Forex markup', icon: 'ti-world', finePrint: true },
+  eligibility: { label: 'Eligibility', icon: 'ti-user-check', finePrint: true },
+  documentsRequired: { label: 'Documents required', icon: 'ti-file-text', finePrint: true }
+};
+
+const API_BASE = '';
+
+async function lookup(card) {
+  const response = await fetch(API_BASE + '/api/lookup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(card)
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    const message = data.debug ? `${data.error} (${data.debug})` : (data.error || 'Lookup failed');
+    const err = new Error(message);
+    err.retrySeconds = data.retrySeconds || null;
+    throw err;
+  }
+  return data;
+}
+
+function renderError(container, e) {
+  if (e.retrySeconds) {
+    let remaining = e.retrySeconds;
+    container.innerHTML = '<div class="error"><i class="ti ti-alert-triangle"></i><div>' + e.message + ' (<span class="retry-count">' + remaining + '</span>s)</div></div>';
+    const span = container.querySelector('.retry-count');
+    const timer = setInterval(() => {
+      remaining -= 1;
+      if (!span.isConnected) { clearInterval(timer); return; }
+      if (remaining <= 0) { span.parentElement.textContent = 'You can try again now.'; clearInterval(timer); return; }
+      span.textContent = remaining;
+    }, 1000);
+  } else {
+    container.innerHTML = '<div class="error"><i class="ti ti-alert-triangle"></i><div>' + e.message + '</div></div>';
+  }
+}
+
+function renderCard(parsed, card) {
+  const tier = tierFor(card.variant);
+  let html = '<div class="card-result">';
+  html += '<div class="card-result-header"><span class="card-result-swatch" style="background:' + tierColors[tier] + '"></span><div class="card-title">' + card.bank + '</div></div>';
+  html += '<div class="card-sub">' + card.cardType + ' - ' + card.variant + (card.network ? ' (' + card.network + ')' : '') + '</div>';
+
+  // --- Overview tab: the decision-making essentials ---
+  let overview = '';
+  if (parsed.welcomeBenefit) overview += '<div class="welcome-pill"><i class="ti ti-confetti"></i>' + parsed.welcomeBenefit + '</div>';
+  const feeRows = [['Joining','joining'],['Annual','annual'],['Add-on card','addOnCard'],['Late payment','latePayment'],['Interest rate','interestRate']];
+  if (card.cardType === 'Debit Card') feeRows.splice(3, 0, ['Cash withdrawal','cashWithdrawal']);
+  const feeCells = feeRows.filter(r => (parsed.fees || {})[r[1]] && parsed.fees[r[1]] !== 'Not applicable');
+  if (feeCells.length) {
+    overview += '<div class="fee-grid">';
+    feeCells.forEach(r => {
+      overview += '<div class="fee-cell"><div class="fee-label">' + r[0] + '</div><div class="fee-value">' + parsed.fees[r[1]] + '</div></div>';
+    });
+    overview += '</div>';
+  }
+  if (parsed.feeWaiverTip && parsed.feeWaiverTip !== 'Not applicable') {
+    overview += '<div class="callout"><div class="callout-title"><i class="ti ti-receipt-refund"></i>How to waive the fee</div>' + parsed.feeWaiverTip + '</div>';
+    overview += '<div class="fee-tracker-slot" data-tip="' + parsed.feeWaiverTip.replace(/"/g, '&quot;') + '"></div>';
+  }
+  if (Array.isArray(parsed.maximizeTips) && parsed.maximizeTips.length) {
+    overview += '<div class="callout maximize"><div class="callout-title"><i class="ti ti-bulb"></i>Get the most from this card</div><ul>';
+    parsed.maximizeTips.forEach(t => { overview += '<li>' + t + '</li>'; });
+    overview += '</ul></div>';
+  }
+  if (!overview) overview = '<p style="color:var(--ink-muted); font-size:14px;">No overview details found for this card.</p>';
+
+  // --- Rewards and perks tab ---
+  let rewards = '';
+  ['rewards','loungeAccess','milestoneBenefits','otherPerks'].forEach(key => {
+    const meta = sectionMeta[key];
+    const val = parsed[key];
+    const items = Array.isArray(val) ? val : (val ? [val] : []);
+    if (!items.length) return;
+    rewards += '<div class="section-title"><i class="ti ' + meta.icon + '"></i>' + meta.label + '</div><ul class="benefit-list">';
+    items.forEach(it => { rewards += '<li>' + it + '</li>'; });
+    rewards += '</ul>';
+  });
+  const portal = networkPortals[card.network];
+  if (Array.isArray(parsed.networkPerks) && parsed.networkPerks.length) {
+    rewards += '<div class="callout network"><div class="callout-title"><i class="ti ti-building-bank"></i>' + (card.network || 'Network') + ' perks (beyond what the bank gives)</div><ul>';
+    parsed.networkPerks.forEach(t => { rewards += '<li>' + t + '</li>'; });
+    rewards += '</ul></div>';
+  }
+  if (!rewards) rewards = '<p style="color:var(--ink-muted); font-size:14px;">No specific rewards or perks found for this card.</p>';
+
+  // --- Fees and eligibility tab: the fine print ---
+  let feesTab = '<div class="fee-grid">';
+  const allFeeRows = [['Joining','joining'],['Annual','annual'],['Add-on card','addOnCard'],['Cash withdrawal','cashWithdrawal'],['Late payment','latePayment'],['Interest rate','interestRate']];
+  const allFeeCells = allFeeRows.filter(r => (parsed.fees || {})[r[1]] && parsed.fees[r[1]] !== 'Not applicable');
+  allFeeCells.forEach(r => {
+    feesTab += '<div class="fee-cell"><div class="fee-label">' + r[0] + '</div><div class="fee-value">' + parsed.fees[r[1]] + '</div></div>';
+  });
+  feesTab += '</div>';
+  ['fuelSurcharge','insurance','forexMarkup','eligibility','documentsRequired'].forEach(key => {
+    const meta = sectionMeta[key];
+    const val = parsed[key];
+    const items = Array.isArray(val) ? val : (val ? [val] : []);
+    if (!items.length) return;
+    feesTab += '<div class="section-title"><i class="ti ' + meta.icon + '"></i>' + meta.label + '</div><ul class="benefit-list">';
+    items.forEach(it => { feesTab += '<li>' + it + '</li>'; });
+    feesTab += '</ul>';
+  });
+
+  html += '<div class="tabs">' +
+    '<button type="button" class="tab-btn active" data-tab="overview"><i class="ti ti-layout-dashboard"></i>Overview</button>' +
+    '<button type="button" class="tab-btn" data-tab="rewards"><i class="ti ti-gift"></i>Rewards and perks</button>' +
+    '<button type="button" class="tab-btn" data-tab="fees"><i class="ti ti-file-invoice"></i>Fees and eligibility</button>' +
+    '</div>';
+  html += '<div class="tab-panel active" data-panel="overview">' + overview + '</div>';
+  html += '<div class="tab-panel" data-panel="rewards">' + rewards + '</div>';
+  html += '<div class="tab-panel" data-panel="fees">' + feesTab + '</div>';
+
+  if (parsed.sources && parsed.sources.length) {
+    html += '<div class="sources">Sources (links may expire since they route through Google Search): ' + parsed.sources.map(s => {
+      const label = s.title || s.url;
+      const searchFallback = 'https://www.google.com/search?q=' + encodeURIComponent(s.title || s.url);
+      return '<a href="' + s.url + '" target="_blank" rel="noopener">' + label + '</a> (<a href="' + searchFallback + '" target="_blank" rel="noopener">search</a>)';
+    }).join(', ') + '</div>';
+  }
+  if (portal) {
+    html += '<div class="portal-link"><i class="ti ti-external-link"></i><a href="' + portal.url + '" target="_blank" rel="noopener">Browse ' + card.network + ' offers</a><span> - ' + portal.note + '</span></div>';
+  }
+  const applyQuery = encodeURIComponent(card.bank + ' ' + card.variant + ' ' + card.cardType + ' apply online');
+  html += '<a class="apply-link" href="https://www.google.com/search?q=' + applyQuery + '" target="_blank" rel="noopener"><i class="ti ti-external-link"></i>Apply for this card</a>';
+  html += '<button class="save-btn" data-bank="' + card.bank + '" data-type="' + card.cardType + '" data-variant="' + card.variant + '"><i class="ti ti-bookmark"></i>Save this card</button>';
+  html += '</div>';
+  return html;
+}
+
+function wireTabs(root) {
+  root.querySelectorAll('.card-result').forEach(cardEl => {
+    const btns = cardEl.querySelectorAll('.tab-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        cardEl.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        const target = cardEl.querySelector('.tab-panel[data-panel="' + btn.dataset.tab + '"]');
+        if (target) target.classList.add('active');
+      });
+    });
+  });
+}
+
+function wireFeeTracker(root, card, index) {
+  const all = root.querySelectorAll('.card-result');
+  const cardEl = typeof index === 'number' ? all[index] : all[0];
+  if (!cardEl) return;
+  const slot = cardEl.querySelector('.fee-tracker-slot');
+  if (!slot) return;
+  const tipText = slot.dataset.tip || '';
+  const match = tipText.match(/₹\s?([\d,]+(?:\.\d+)?)/);
+  if (!match) return;
+  const target = parseFloat(match[1].replace(/,/g, ''));
+  if (!target || target <= 0) return;
+  const key = 'feeSpend:' + card.bank + '|' + card.cardType + '|' + card.variant;
+  const saved = parseFloat(localStorage.getItem(key) || '0');
+
+  function fmt(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+
+  slot.innerHTML =
+    '<div class="fee-tracker">' +
+    '<div class="fee-tracker-label"><span>Spend progress toward waiver</span><span class="fee-progress-text">' + fmt(saved) + ' / ' + fmt(target) + '</span></div>' +
+    '<div class="fee-tracker-bar"><div class="fee-tracker-fill' + (saved >= target ? ' done' : '') + '" style="width:' + Math.min(100, (saved / target) * 100) + '%"></div></div>' +
+    '<input type="number" class="fee-spend-input" placeholder="How much have you spent so far this year?" value="' + (saved || '') + '" />' +
+    '<div class="fee-tracker-note">Target estimated from the tip above. Saved on this device only, not sent anywhere.</div>' +
+    '</div>';
+
+  const input = slot.querySelector('.fee-spend-input');
+  input.addEventListener('change', () => {
+    const val = Math.max(0, parseFloat(input.value) || 0);
+    localStorage.setItem(key, String(val));
+    const fill = slot.querySelector('.fee-tracker-fill');
+    const pct = Math.min(100, (val / target) * 100);
+    fill.style.width = pct + '%';
+    fill.classList.toggle('done', val >= target);
+    slot.querySelector('.fee-progress-text').textContent = fmt(val) + ' / ' + fmt(target);
+  });
+}
+
+function extractRupees(str) {
+  if (!str) return null;
+  const match = String(str).match(/₹\s?([\d,]+(?:\.\d+)?)/);
+  return match ? parseFloat(match[1].replace(/,/g, '')) : null;
+}
+function extractPercent(str) {
+  if (!str) return null;
+  const match = String(str).match(/([\d.]+)\s?%/);
+  return match ? parseFloat(match[1]) : null;
+}
+
+function renderComparisonChart(parsedList, cards) {
+  const annualValues = parsedList.map(p => extractRupees(p.fees && p.fees.annual));
+  const forexValues = parsedList.map(p => extractPercent(p.forexMarkup));
+  const hasAnnual = annualValues.some(v => v !== null);
+  const hasForex = forexValues.some(v => v !== null);
+  if (!hasAnnual && !hasForex) return '';
+
+  function barsFor(values, unit, colorVar) {
+    const max = Math.max(...values.filter(v => v !== null), 1);
+    return values.map((v, i) => {
+      const name = cards[i].bank + ' ' + cards[i].variant;
+      if (v === null) {
+        return '<div class="chart-bar-item"><div class="chart-bar-name" title="' + name + '">' + name + '</div><div class="chart-bar-track"></div><div class="chart-bar-value">n/a</div></div>';
+      }
+      const pct = (v / max) * 100;
+      const valueLabel = unit === '%' ? v + '%' : '₹' + Math.round(v).toLocaleString('en-IN');
+      return '<div class="chart-bar-item"><div class="chart-bar-name" title="' + name + '">' + name + '</div>' +
+        '<div class="chart-bar-track"><div class="chart-bar-fill" style="width:' + pct + '%; background:var(' + colorVar + ')"></div></div>' +
+        '<div class="chart-bar-value">' + valueLabel + '</div></div>';
+    }).join('');
+  }
+
+  let html = '<div class="chart-wrap"><div class="chart-title">Quick visual comparison</div>';
+  if (hasAnnual) {
+    html += '<div class="chart-row"><div class="chart-row-label">Annual fee (lower is better)</div><div class="chart-bars">' + barsFor(annualValues, '₹', '--teal') + '</div></div>';
+  }
+  if (hasForex) {
+    html += '<div class="chart-row"><div class="chart-row-label">Forex markup (lower is better)</div><div class="chart-bars">' + barsFor(forexValues, '%', '--brass') + '</div></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderExportRow(parsedList, cards) {
+  return '<div class="export-row" id="compareExportRow">' +
+    '<button type="button" class="export-btn" id="copyComparisonBtn"><i class="ti ti-copy"></i>Copy comparison summary</button>' +
+    '<button type="button" class="export-btn" id="downloadComparisonBtn"><i class="ti ti-download"></i>Download as text file</button>' +
+    '</div>';
+}
+
+function buildComparisonText(parsedList, cards) {
+  let text = 'Card benefits comparison\n' + new Date().toLocaleDateString('en-IN') + '\n\n';
+  parsedList.forEach((p, i) => {
+    const c = cards[i];
+    text += '=== ' + c.bank + ' - ' + c.variant + (c.network ? ' (' + c.network + ')' : '') + ' ===\n';
+    text += c.cardType + '\n';
+    if (p.fees) {
+      Object.entries(p.fees).forEach(([k, v]) => { if (v && v !== 'Not applicable') text += '  ' + k + ': ' + v + '\n'; });
+    }
+    if (p.feeWaiverTip) text += '  Fee waiver: ' + p.feeWaiverTip + '\n';
+    ['rewards', 'loungeAccess', 'milestoneBenefits', 'otherPerks'].forEach(k => {
+      const items = Array.isArray(p[k]) ? p[k] : [];
+      if (items.length) text += '  ' + k + ': ' + items.join('; ') + '\n';
+    });
+    text += '\n';
+  });
+  return text;
+}
+
+function wireExportButtons(parsedList, cards) {
+  const copyBtn = document.getElementById('copyComparisonBtn');
+  const downloadBtn = document.getElementById('downloadComparisonBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      const text = buildComparisonText(parsedList, cards);
+      try {
+        await navigator.clipboard.writeText(text);
+        const original = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<i class="ti ti-check"></i>Copied';
+        setTimeout(() => { copyBtn.innerHTML = original; }, 1500);
+      } catch (e) {}
+    });
+  }
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      const text = buildComparisonText(parsedList, cards);
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'card-comparison.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+}
+
+function saveCard(card) {
+  const key = 'card:' + card.bank + '|' + card.cardType + '|' + card.variant;
+  localStorage.setItem(key, JSON.stringify(card));
+  loadSaved();
+}
+
+function loadSaved() {
+  const list = document.getElementById('savedList');
+  const keys = Object.keys(localStorage).filter(k => k.startsWith('card:'));
+  if (!keys.length) { list.innerHTML = '<span class="saved-empty">None yet. Look up a card and save it.</span>'; return; }
+  list.innerHTML = '';
+  keys.forEach(k => {
+    const card = JSON.parse(localStorage.getItem(k));
+    const chip = document.createElement('button');
+    chip.className = 'saved-chip';
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    dot.style.background = tierColors[tierFor(card.variant)];
+    chip.appendChild(dot);
+    chip.appendChild(document.createTextNode(card.bank + ' - ' + card.variant + (card.network ? ' (' + card.network + ')' : '')));
+    chip.addEventListener('click', () => {
+      setMode('single');
+      singlePicker.set(card.bank, card.cardType, card.variant, card.network);
+    });
+    list.appendChild(chip);
+  });
+}
+loadSaved();
+
+document.getElementById('exportSavedBtn').addEventListener('click', () => {
+  const keys = Object.keys(localStorage).filter(k => k.startsWith('card:'));
+  const cards = keys.map(k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }).filter(Boolean);
+  if (!cards.length) return;
+  let text = 'My saved cards\n' + new Date().toLocaleDateString('en-IN') + '\n\n';
+  cards.forEach(c => {
+    text += '- ' + c.bank + ' ' + c.cardType + ' - ' + c.variant + (c.network ? ' (' + c.network + ')' : '') + '\n';
+  });
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'my-saved-cards.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+function renderPortalGrid() {
+  const grid = document.getElementById('portalGrid');
+  grid.innerHTML = Object.keys(networkPortals).map(net => {
+    const p = networkPortals[net];
+    const safeId = 'bin-' + net.replace(/\s+/g, '');
+    const saved = localStorage.getItem('bin:' + net) || '';
+    return '<div class="portal-card" style="border-left-color:' + (networkColors[net] || networkColors['']) + '">' +
+      '<a href="' + p.url + '" target="_blank" rel="noopener"><div class="portal-name">' + net + '<i class="ti ti-external-link"></i></div><div class="portal-note">' + p.note + '</div></a>' +
+      '<div class="bin-row">' +
+      '<input type="text" inputmode="numeric" maxlength="8" placeholder="Your card BIN (first 6-8 digits)" value="' + saved + '" id="' + safeId + '" />' +
+      '<button type="button" data-net="' + net + '" class="bin-save">Save</button>' +
+      '<button type="button" data-net="' + net + '" class="bin-copy">Copy</button>' +
+      '</div><div class="bin-saved-note" id="' + safeId + '-note">' + (saved ? 'Saved on this device' : '') + '</div>' +
+      '</div>';
+  }).join('');
+
+  grid.querySelectorAll('.bin-save').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const net = btn.dataset.net;
+      const input = document.getElementById('bin-' + net.replace(/\s+/g, ''));
+      const note = document.getElementById('bin-' + net.replace(/\s+/g, '') + '-note');
+      const digits = input.value.replace(/\D/g, '').slice(0, 8);
+      input.value = digits;
+      if (digits.length >= 6) {
+        localStorage.setItem('bin:' + net, digits);
+        note.textContent = 'Saved on this device';
+      } else {
+        note.textContent = 'Needs at least 6 digits';
+      }
+    });
+  });
+  grid.querySelectorAll('.bin-copy').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const net = btn.dataset.net;
+      const input = document.getElementById('bin-' + net.replace(/\s+/g, ''));
+      if (!input.value) return;
+      try {
+        await navigator.clipboard.writeText(input.value);
+        const original = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => { btn.textContent = original; }, 1200);
+      } catch (e) {}
+    });
+  });
+}
+renderPortalGrid();
+
+const LOADING_STEPS = ['Checking the bank\'s official page...', 'Verifying fees and eligibility...', 'Checking network-specific perks...', 'Putting it all together...'];
+
+function startStepLoader(container, count) {
+  count = count || 1;
+  const ids = [];
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    const id = 'loader-' + Math.random().toString(36).slice(2);
+    ids.push(id);
+    html += '<div class="status" id="' + id + '"><div class="spinner"></div>' + LOADING_STEPS[0] + '</div>';
+  }
+  container.innerHTML = html;
+  let step = 0;
+  const timer = setInterval(() => {
+    step = (step + 1) % LOADING_STEPS.length;
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.lastChild.textContent = LOADING_STEPS[step];
+    });
+  }, 1400);
+  return () => clearInterval(timer);
+}
+
+document.getElementById('goSingle').addEventListener('click', async () => {
+  const card = singlePicker.get();
+  const results = document.getElementById('resultsSingle');
+  const stopLoader = startStepLoader(results, 1);
+  try {
+    const parsed = await lookup(card);
+    stopLoader();
+    results.innerHTML = renderCard(parsed, card);
+    results.querySelector('.save-btn').addEventListener('click', () => saveCard(card));
+    wireTabs(results);
+    wireFeeTracker(results, card);
+  } catch (e) {
+    stopLoader();
+    renderError(results, e);
+  }
+});
+
+document.getElementById('goCompare').addEventListener('click', async () => {
+  const cards = comparePickers.map(p => p.instance.get());
+  const results = document.getElementById('resultsCompare');
+  const chartContainer = document.getElementById('chartContainer');
+  chartContainer.innerHTML = '';
+  const stopLoader = startStepLoader(results, cards.length);
+  try {
+    const parsedList = await Promise.all(cards.map(c => lookup(c)));
+    stopLoader();
+    results.innerHTML = parsedList.map((p, i) => renderCard(p, cards[i])).join('');
+    const btns = results.querySelectorAll('.save-btn');
+    btns.forEach((btn, i) => btn.addEventListener('click', () => saveCard(cards[i])));
+    wireTabs(results);
+    parsedList.forEach((p, i) => wireFeeTracker(results, cards[i], i));
+    chartContainer.innerHTML = renderComparisonChart(parsedList, cards);
+    results.insertAdjacentHTML('afterend', renderExportRow(parsedList, cards));
+    wireExportButtons(parsedList, cards);
+  } catch (e) {
+    stopLoader();
+    renderError(results, e);
+  }
+});
+
+let chatHistory = [];
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function appendChatBubble(role, html, id) {
+  const messages = document.getElementById('chatMessages');
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-msg ' + role;
+  if (id) bubble.id = id;
+  bubble.innerHTML = html;
+  messages.appendChild(bubble);
+  messages.scrollTop = messages.scrollHeight;
+  return bubble;
+}
+
+async function sendChatMessage(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return;
+  const input = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('chatSend');
+  input.value = '';
+  sendBtn.disabled = true;
+
+  appendChatBubble('user', escapeHtml(trimmed));
+  const loadingBubble = appendChatBubble('assistant loading', '<div class="spinner" style="width:16px;height:16px;"></div>Checking current sources...');
+
+  try {
+    const response = await fetch(API_BASE + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: trimmed,
+        history: chatHistory
+      })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      const message = data.retrySeconds ? `${data.error} (wait ~${data.retrySeconds}s)` : (data.error || 'Could not get an answer.');
+      loadingBubble.className = 'chat-msg error-msg';
+      loadingBubble.innerHTML = '<i class="ti ti-alert-triangle"></i> ' + escapeHtml(message);
+      sendBtn.disabled = false;
+      return;
+    }
+    let html = escapeHtml(data.answer).replace(/\n/g, '<br>');
+    if (data.sources && data.sources.length) {
+      html += '<div class="chat-sources">Sources: ' + data.sources.map(s => {
+        const label = escapeHtml(s.title || s.url);
+        const searchFallback = 'https://www.google.com/search?q=' + encodeURIComponent(s.title || s.url);
+        return '<a href="' + s.url + '" target="_blank" rel="noopener">' + label + '</a> (<a href="' + searchFallback + '" target="_blank" rel="noopener">search</a>)';
+      }).join(', ') + '</div>';
+    }
+    loadingBubble.className = 'chat-msg assistant';
+    loadingBubble.innerHTML = html;
+    chatHistory.push({ role: 'user', text: trimmed });
+    chatHistory.push({ role: 'assistant', text: data.answer });
+  } catch (e) {
+    loadingBubble.className = 'chat-msg error-msg';
+    loadingBubble.innerHTML = '<i class="ti ti-alert-triangle"></i> Something went wrong. Try again.';
+  }
+  sendBtn.disabled = false;
+}
+
+document.getElementById('chatSend').addEventListener('click', () => {
+  sendChatMessage(document.getElementById('chatInput').value);
+});
+document.getElementById('chatInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendChatMessage(document.getElementById('chatInput').value);
+});
+document.getElementById('chatSuggestions').querySelectorAll('.chat-chip').forEach(chip => {
+  chip.addEventListener('click', () => sendChatMessage(chip.textContent));
+});
+
+function renderSalaryAccounts(parsed) {
+  let html = '<div class="salary-results">';
+  const recs = Array.isArray(parsed.recommendations) ? parsed.recommendations : [];
+  if (!recs.length) {
+    html += '<p style="color:var(--ink-muted); font-size:14px;">No confident recommendations found for this salary range. Try a different range or bank.</p>';
+  }
+  recs.forEach((r, i) => {
+    html += '<div class="salary-account-card">';
+    html += '<div class="salary-account-title-row"><span class="salary-account-rank">' + (i + 1) + '</span><span class="salary-account-name">' + (r.accountName || 'Account') + '</span></div>';
+    html += '<div class="salary-account-bank">' + (r.bank || '') + '</div>';
+    if (r.minSalaryRequirement) {
+      html += '<div class="salary-min"><b>Minimum salary:</b> ' + r.minSalaryRequirement + '</div>';
+    }
+    if (r.whyThisFits) {
+      html += '<div class="salary-why">' + r.whyThisFits + '</div>';
+    }
+    const benefits = Array.isArray(r.keyBenefits) ? r.keyBenefits : [];
+    if (benefits.length) {
+      html += '<ul class="salary-benefits">';
+      benefits.forEach(b => { html += '<li>' + b + '</li>'; });
+      html += '</ul>';
+    }
+    if (r.debitCardVariant) {
+      html += '<div class="salary-debit"><i class="ti ti-credit-card" style="font-size:13px;vertical-align:-2px;"></i> Debit card: ' + r.debitCardVariant + '</div>';
+    }
+    html += '</div>';
+  });
+  if (Array.isArray(parsed.generalTips) && parsed.generalTips.length) {
+    html += '<div class="salary-tips"><div class="callout-title"><i class="ti ti-bulb"></i>General tips</div><ul>';
+    parsed.generalTips.forEach(t => { html += '<li>' + t + '</li>'; });
+    html += '</ul></div>';
+  }
+  if (parsed.sources && parsed.sources.length) {
+    html += '<div class="sources">Sources (links may expire since they route through Google Search): ' + parsed.sources.map(s => {
+      const label = s.title || s.url;
+      const searchFallback = 'https://www.google.com/search?q=' + encodeURIComponent(s.title || s.url);
+      return '<a href="' + s.url + '" target="_blank" rel="noopener">' + label + '</a> (<a href="' + searchFallback + '" target="_blank" rel="noopener">search</a>)';
+    }).join(', ') + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+document.getElementById('goSalary').addEventListener('click', async () => {
+  const salaryRange = document.getElementById('salaryRange').value;
+  const preferredBank = document.getElementById('salaryPreferredBank').value;
+  const results = document.getElementById('resultsSalary');
+  const stopLoader = startStepLoader(results, 1);
+  try {
+    const response = await fetch(API_BASE + '/api/salary-account', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ salaryRange, preferredBank })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      const err = new Error(data.debug ? `${data.error} (${data.debug})` : (data.error || 'Lookup failed'));
+      err.retrySeconds = data.retrySeconds || null;
+      throw err;
+    }
+    stopLoader();
+    results.innerHTML = renderSalaryAccounts(data);
+  } catch (e) {
+    stopLoader();
+    renderError(results, e);
+  }
+});
+
+function renderQuizResults(parsed) {
+  let html = '<div class="salary-results">';
+  const recs = Array.isArray(parsed.recommendations) ? parsed.recommendations : [];
+  if (!recs.length) {
+    html += '<p style="color:var(--ink-muted); font-size:14px;">No confident matches found. Try adjusting your answers.</p>';
+  }
+  recs.forEach((r, i) => {
+    html += '<div class="salary-account-card">';
+    html += '<div class="salary-account-title-row"><span class="salary-account-rank">' + (i + 1) + '</span><span class="salary-account-name">' + (r.cardName || 'Card') + '</span></div>';
+    html += '<div class="salary-account-bank">' + (r.bank || '') + (r.network ? ' - ' + r.network : '') + '</div>';
+    if (r.annualFee) html += '<div class="salary-min"><b>Annual fee:</b> ' + r.annualFee + '</div>';
+    if (r.whyThisFits) html += '<div class="salary-why">' + r.whyThisFits + '</div>';
+    const perks = Array.isArray(r.keyPerks) ? r.keyPerks : [];
+    if (perks.length) {
+      html += '<ul class="salary-benefits">';
+      perks.forEach(p => { html += '<li>' + p + '</li>'; });
+      html += '</ul>';
+    }
+    html += '</div>';
+  });
+  if (parsed.sources && parsed.sources.length) {
+    html += '<div class="sources">Sources (links may expire since they route through Google Search): ' + parsed.sources.map(s => {
+      const label = s.title || s.url;
+      const searchFallback = 'https://www.google.com/search?q=' + encodeURIComponent(s.title || s.url);
+      return '<a href="' + s.url + '" target="_blank" rel="noopener">' + label + '</a> (<a href="' + searchFallback + '" target="_blank" rel="noopener">search</a>)';
+    }).join(', ') + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+document.getElementById('goQuiz').addEventListener('click', async () => {
+  const spendCategory = document.getElementById('quizSpendCategory').value;
+  const spendAmount = document.getElementById('quizSpendAmount').value;
+  const wantsLounge = document.getElementById('quizLounge').value;
+  const preferredNetwork = document.getElementById('quizNetwork').value;
+  const results = document.getElementById('resultsQuiz');
+  const stopLoader = startStepLoader(results, 1);
+  try {
+    const response = await fetch(API_BASE + '/api/recommend-card', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ spendCategory, spendAmount, wantsLounge, preferredNetwork })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      const err = new Error(data.debug ? `${data.error} (${data.debug})` : (data.error || 'Lookup failed'));
+      err.retrySeconds = data.retrySeconds || null;
+      throw err;
+    }
+    stopLoader();
+    results.innerHTML = renderQuizResults(data);
+  } catch (e) {
+    stopLoader();
+    renderError(results, e);
+  }
+});
+</script>
+</body>
+</html>
