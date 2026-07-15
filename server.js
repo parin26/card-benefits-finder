@@ -46,6 +46,33 @@ const quizLimiter = rateLimit({
 });
 app.use('/api/recommend-card', quizLimiter);
 
+const investmentLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many investment comparisons from this device in the last hour. Try again later.' }
+});
+app.use('/api/compare-investments', investmentLimiter);
+
+const redeemLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many redemption attempts. Try again later.' }
+});
+app.use('/api/redeem-pro', redeemLimiter);
+
+const walletLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many wallet optimization requests from this device in the last hour. Try again later.' }
+});
+app.use('/api/optimize-wallet', walletLimiter);
+
 const NETWORK_PORTAL_HINTS = {
   'Visa': 'https://www.visa.co.in/en_in/visa-offers-and-perks/',
   'Mastercard': 'https://www.mastercard.co.in/en-in/personal/offers-and-promotions.html',
@@ -424,6 +451,265 @@ app.post('/api/recommend-card', async (req, res) => {
     res.json(parsed);
   } catch (err) {
     console.error('Unexpected error in /api/recommend-card:', err);
+    res.status(500).json({ error: err.message || 'Unexpected server error' });
+  }
+});
+
+const FD_RD_SYSTEM_PROMPT = `You are a factual information assistant helping an Indian consumer compare Fixed Deposit (FD) or Recurring Deposit (RD) interest rates. Use Google Search to find current, specific interest rates from major Indian banks (SBI, HDFC Bank, ICICI Bank, Axis Bank, Kotak Mahindra Bank, IndusInd Bank, Yes Bank, IDFC FIRST Bank, Bank of Baroda, Canara Bank, Punjab National Bank) plus at least two or three small finance banks (for example AU Small Finance Bank, Equitas Small Finance Bank, Suryoday Small Finance Bank, Unity Small Finance Bank, Jana Small Finance Bank), since small finance banks often post meaningfully higher rates than larger banks and leaving them out would understate what is actually available.
+
+Critical rule to avoid a common, serious error: several bank names have separate, differently-regulated affiliated companies that are NOT the bank itself, most often a Housing Finance Company (HFC) or NBFC that shares part of the brand name and typically offers noticeably higher rates than the bank because it is a different, higher-risk type of entity. The clearest example: "PNB Housing Finance" (pnbhousing.com) is a separate HFC, not Punjab National Bank the actual bank (pnb.bank.in or pnbindia.in) - never use PNB Housing Finance's rates when asked about Punjab National Bank, even though the name overlaps. The same caution applies to any other bank in this list: if a search result's rate seems unusually high for a listed bank, check whether the source is actually a separate NBFC/HFC subsidiary rather than the bank itself before including it. When in doubt about whether a source is the bank itself, do not include that row rather than risk misattributing an affiliate's rate to the bank.
+
+The person has given you a specific tenure bucket, defined by exact day/month boundaries (for example "12 Months 1 Day to 15 Months"). Banks do not all slice their own tenure slabs at the same boundaries. For each bank: find the interest rate for whichever of that bank's own published tenure slabs overlaps with or most closely matches the requested range. If a bank's own slab boundaries differ from the requested range (for example the bank quotes one flat rate for "1 year to 2 years" instead of breaking it into 15/18/24/30-month slabs), say so explicitly in that row rather than silently presenting it as an exact match.
+
+Report both the nominal annual interest rate AND the annualized yield (the effective compounded return over 12 months, sometimes published separately by banks alongside the nominal rate) where the bank publishes both. If a bank does not publish a separate annualized yield figure, leave that field empty rather than calculating or guessing one yourself.
+
+If senior citizen is true, use the senior citizen rate for each bank instead of the general rate, and say so in generalNotes.
+
+Present this as neutral factual comparison data, not a recommendation to choose any particular bank. Respond with ONLY one minified JSON object, no markdown fences, no commentary. Match exactly this schema: {"comparison":[{"bank":"","productName":"","interestRate":"","annualizedYield":"","tenure":"","slabNote":""}],"generalNotes":["",""],"sources":[{"title":"","url":""}]}. "slabNote" should be empty unless that bank's own slab boundaries genuinely differ from the requested range, in which case briefly state the bank's actual slab (for example "This bank's own slab is 1-2 years, quoted as one flat rate"). Include 6 to 10 banks in the comparison, prioritizing accuracy over quantity - it is fine to omit a bank if you cannot find a current, specific rate for it rather than guessing. Keep generalNotes to at most 3 short, factual items (for example how interest is compounded, or premature withdrawal penalty norms) - not recommendations. Never construct or guess a URL; only report one you actually saw in search results. The JSON object is the entire response, nothing else.`;
+
+const MUTUAL_FUND_SYSTEM_PROMPT = `You are a factual, cautious information assistant helping an Indian consumer understand mutual fund categories relevant to their stated risk appetite and time horizon. You must NOT recommend or name any specific mutual fund scheme, and you must NOT state expected or guaranteed future returns. Use Google Search to find recent AMFI or SEBI category-average historical return data for the relevant category (debt, hybrid, or equity funds matching the given risk appetite), presenting it explicitly and only as historical context, never as a promise of future performance. Explain the general risk characteristics of that category factually. Respond with ONLY one minified JSON object, no markdown fences, no commentary. Match exactly this schema: {"categoryOverview":"","historicalReturnRange":"","comparison":[{"fundCategory":"","typicalRiskLevel":"","whatItInvestsIn":""}],"generalNotes":["",""],"sources":[{"title":"","url":""}]}. In "historicalReturnRange", explicitly state it is a historical category average, not a guarantee, and reference the approximate time period the data covers. Keep "comparison" to 2 to 3 sub-categories within the requested risk band (for example, within "equity", large-cap vs mid-cap vs small-cap) described generally, never a named scheme. Keep generalNotes to at most 3 items and do not include investment recommendations in them. Never construct or guess a URL; only report one you actually saw in search results. The JSON object is the entire response, nothing else.`;
+
+const FD_RD_DISCLAIMER = 'Fixed and recurring deposits are bank deposits, not market-linked investments. The interest rate is fixed for the tenure you choose. Deposits (principal plus interest) are insured by DICGC up to ₹5 lakh per depositor per bank, combined across all your accounts at that bank. This is factual rate information, not personalized financial advice — confirm current rates directly with the bank before depositing, since rates change frequently and may differ by branch or deposit amount.';
+
+const MUTUAL_FUND_DISCLAIMER = 'Mutual fund investments are subject to market risk. Unlike a bank deposit, there is no fixed return and no capital protection or deposit insurance — the value of your investment can go down as well as up, and equity-oriented funds carry meaningfully higher risk than debt or hybrid funds. Any historical return figures shown are category averages over a past period; they do not predict or guarantee future performance. This is general educational information, not personalized investment advice. Consider consulting a SEBI-registered investment advisor before making any investment decision, and read all scheme-related documents carefully.';
+
+app.post('/api/compare-investments', async (req, res) => {
+  const { investmentType, tenure, seniorCitizen, riskAppetite, horizon } = req.body || {};
+  if (!investmentType) {
+    return res.status(400).json({ error: 'An investment type is required' });
+  }
+  if (!process.env.GEMINI_API_KEY) {
+    return res.status(500).json({ error: 'Server is missing GEMINI_API_KEY. Set it in your .env file.' });
+  }
+
+  const isMutualFund = investmentType === 'Mutual Fund';
+  const systemPrompt = isMutualFund ? MUTUAL_FUND_SYSTEM_PROMPT : FD_RD_SYSTEM_PROMPT;
+  const userText = isMutualFund
+    ? `Risk appetite: ${riskAppetite}\nInvestment horizon: ${horizon}\nExplain the relevant mutual fund category options for this profile.`
+    : `Investment type: ${investmentType}\nTenure: ${tenure}\nSenior citizen: ${seniorCitizen ? 'Yes' : 'No'}\nCompare current interest rates across banks for this tenure.`;
+
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: userText }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        tools: [{ google_search: {} }],
+        generationConfig: {
+          maxOutputTokens: 8192,
+          temperature: 0.3,
+          thinkingConfig: { thinkingBudget: 512 }
+        }
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Gemini API error response (compare-investments):', JSON.stringify(data));
+      if (response.status === 429) {
+        const rawMessage = data.error?.message || '';
+        const retryMatch = rawMessage.match(/retry in ([\d.]+)s/i);
+        const retrySeconds = retryMatch ? Math.ceil(parseFloat(retryMatch[1])) : null;
+        const isDailyCap = /generate_content_free_tier_requests_per_day|per_day/i.test(rawMessage);
+        const friendly = isDailyCap
+          ? "You've hit Gemini's free daily request limit. It resets at midnight Pacific Time."
+          : retrySeconds
+            ? `Gemini's free-tier burst limit was hit. Wait about ${retrySeconds} seconds and try again.`
+            : "Gemini's rate limit was hit. Wait a moment and try again.";
+        return res.status(429).json({ error: friendly, retrySeconds });
+      }
+      return res.status(response.status).json({ error: data.error?.message || 'Gemini API request failed' });
+    }
+
+    const candidate = data.candidates?.[0];
+    if (data.promptFeedback?.blockReason) {
+      return res.status(502).json({ error: `Request was blocked by Gemini: ${data.promptFeedback.blockReason}` });
+    }
+    if (!candidate) {
+      return res.status(502).json({ error: 'Gemini returned no answer. Try again.' });
+    }
+    if (candidate.finishReason === 'MAX_TOKENS') {
+      return res.status(502).json({ error: 'The response was cut off before it finished. Try again.' });
+    }
+    if (candidate.finishReason === 'SAFETY' || candidate.finishReason === 'RECITATION') {
+      return res.status(502).json({ error: `Gemini declined to answer (reason: ${candidate.finishReason}).` });
+    }
+
+    const parts = candidate.content?.parts || [];
+    const rawText = parts.map((p) => p.text || '').join('\n');
+    const jsonStr = extractJson(rawText);
+
+    if (!jsonStr) {
+      console.error('Could not find JSON in compare-investments output. Raw text was:', rawText.slice(0, 2000));
+      return res.status(502).json({
+        error: 'The model did not return structured data. Try again.',
+        debug: rawText.slice(0, 300)
+      });
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(jsonStr);
+    } catch (parseErr) {
+      console.error('JSON.parse failed on compare-investments output:', jsonStr.slice(0, 2000));
+      return res.status(502).json({
+        error: 'The model returned malformed data. Try again.',
+        debug: jsonStr.slice(0, 300)
+      });
+    }
+
+    const groundingChunks = candidate.groundingMetadata?.groundingChunks || [];
+    const realSources = groundingChunks
+      .map((c) => ({ title: c.web?.title || '', url: c.web?.uri || '' }))
+      .filter((s) => s.url)
+      .slice(0, 5);
+    if (realSources.length) {
+      parsed.sources = realSources;
+    } else if (!Array.isArray(parsed.sources)) {
+      parsed.sources = [];
+    }
+
+    // Disclaimer is hardcoded server-side and always attached, regardless of
+    // what the model produced - this must never depend on the model remembering to include it.
+    parsed.disclaimer = isMutualFund ? MUTUAL_FUND_DISCLAIMER : FD_RD_DISCLAIMER;
+    parsed.riskLevel = isMutualFund
+      ? (riskAppetite === 'High' ? 'High - market risk, no capital protection' : riskAppetite === 'Medium' ? 'Medium - some market risk' : 'Low to medium - mostly debt instruments, some market risk')
+      : 'Very low - fixed, bank-guaranteed rate, DICGC insured up to ₹5 lakh';
+    parsed.investmentType = investmentType;
+
+    res.json(parsed);
+  } catch (err) {
+    console.error('Unexpected error in /api/compare-investments:', err);
+    res.status(500).json({ error: err.message || 'Unexpected server error' });
+  }
+});
+
+// Simple, low-infrastructure Pro unlock: the site owner generates codes themselves (e.g. one
+// per Razorpay payment, matched manually via the Razorpay dashboard) and lists them in the
+// PRO_CODES environment variable, comma-separated. This is intentionally lightweight - it has
+// no real user accounts, so a code just flips a client-side flag once verified. Good enough for
+// a solo/small operator; swap for real auth + a database if this needs to scale or resist sharing.
+app.post('/api/redeem-pro', (req, res) => {
+  const { code } = req.body || {};
+  if (!code || typeof code !== 'string') {
+    return res.status(400).json({ valid: false, error: 'A code is required' });
+  }
+  const validCodes = (process.env.PRO_CODES || '').split(',').map((c) => c.trim()).filter(Boolean);
+  if (!validCodes.length) {
+    return res.status(200).json({ valid: false, error: 'Pro codes are not configured on this server yet.' });
+  }
+  const isValid = validCodes.includes(code.trim());
+  res.json({ valid: isValid, error: isValid ? null : 'That code was not recognized.' });
+});
+
+const WALLET_SYSTEM_PROMPT = `You are a financial assistant helping an Indian consumer get the most value out of cards and accounts they ALREADY hold - this is about optimizing existing products, not recommending new ones. Use Google Search to verify each card's current, real benefits before giving advice. For each card in their list, find its actual rewards structure, fee waiver conditions, and standout perks. Then, across the whole set, work out which single card is genuinely the best choice for each common spending category (for example online shopping, dining, fuel, travel, groceries, utility bill payments, EMI/large purchases) based on which card actually rewards that category best - do not just repeat the same "best" card for everything unless it truly is best across the board. Also flag genuine inefficiencies: for example if two cards charge similar annual fees for overlapping benefits, or if a fee waiver is being missed because spend is split across cards instead of concentrated on one. Respond with ONLY one minified JSON object, no markdown fences, no commentary. Match exactly this schema: {"perCard":[{"bank":"","variant":"","topTips":["","",""]}],"categoryStrategy":[{"category":"","bestCard":"","why":""}],"walletNotes":["","",""],"sources":[{"title":"","url":""}]}. Cover 5 to 7 common spending categories in categoryStrategy if the portfolio supports it. Keep topTips to at most 3 per card and walletNotes to at most 4 items. Be specific and reference the actual bank and card name in every recommendation, never speak generically. Never construct or guess a URL; only report one you actually saw in search results. The JSON object is the entire response, nothing else.`;
+
+app.post('/api/optimize-wallet', async (req, res) => {
+  const { cards } = req.body || {};
+  if (!Array.isArray(cards) || !cards.length) {
+    return res.status(400).json({ error: 'At least one card or account is required' });
+  }
+  if (cards.length > 8) {
+    return res.status(400).json({ error: 'Please limit this to 8 cards or accounts at a time' });
+  }
+  if (!process.env.GEMINI_API_KEY) {
+    return res.status(500).json({ error: 'Server is missing GEMINI_API_KEY. Set it in your .env file.' });
+  }
+
+  const cardList = cards
+    .map((c, i) => `${i + 1}. ${c.bank || 'Unknown bank'} ${c.cardType || 'Card'} - ${c.variant || 'Unknown variant'}${c.network ? ' (' + c.network + ')' : ''}`)
+    .join('\n');
+
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: `Here are the cards and accounts I already hold:\n${cardList}\n\nHelp me get the most value out of these specific products.` }] }],
+        systemInstruction: { parts: [{ text: WALLET_SYSTEM_PROMPT }] },
+        tools: [{ google_search: {} }],
+        generationConfig: {
+          maxOutputTokens: 8192,
+          temperature: 0.4,
+          thinkingConfig: { thinkingBudget: 512 }
+        }
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Gemini API error response (optimize-wallet):', JSON.stringify(data));
+      if (response.status === 429) {
+        const rawMessage = data.error?.message || '';
+        const retryMatch = rawMessage.match(/retry in ([\d.]+)s/i);
+        const retrySeconds = retryMatch ? Math.ceil(parseFloat(retryMatch[1])) : null;
+        const isDailyCap = /generate_content_free_tier_requests_per_day|per_day/i.test(rawMessage);
+        const friendly = isDailyCap
+          ? "You've hit Gemini's free daily request limit. It resets at midnight Pacific Time."
+          : retrySeconds
+            ? `Gemini's free-tier burst limit was hit. Wait about ${retrySeconds} seconds and try again.`
+            : "Gemini's rate limit was hit. Wait a moment and try again.";
+        return res.status(429).json({ error: friendly, retrySeconds });
+      }
+      return res.status(response.status).json({ error: data.error?.message || 'Gemini API request failed' });
+    }
+
+    const candidate = data.candidates?.[0];
+    if (data.promptFeedback?.blockReason) {
+      return res.status(502).json({ error: `Request was blocked by Gemini: ${data.promptFeedback.blockReason}` });
+    }
+    if (!candidate) {
+      return res.status(502).json({ error: 'Gemini returned no answer. Try again.' });
+    }
+    if (candidate.finishReason === 'MAX_TOKENS') {
+      return res.status(502).json({ error: 'The response was cut off before it finished. Try with fewer cards.' });
+    }
+    if (candidate.finishReason === 'SAFETY' || candidate.finishReason === 'RECITATION') {
+      return res.status(502).json({ error: `Gemini declined to answer (reason: ${candidate.finishReason}).` });
+    }
+
+    const parts = candidate.content?.parts || [];
+    const rawText = parts.map((p) => p.text || '').join('\n');
+    const jsonStr = extractJson(rawText);
+
+    if (!jsonStr) {
+      console.error('Could not find JSON in optimize-wallet output. Raw text was:', rawText.slice(0, 2000));
+      return res.status(502).json({
+        error: 'The model did not return structured data. Try again.',
+        debug: rawText.slice(0, 300)
+      });
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(jsonStr);
+    } catch (parseErr) {
+      console.error('JSON.parse failed on optimize-wallet output:', jsonStr.slice(0, 2000));
+      return res.status(502).json({
+        error: 'The model returned malformed data. Try again.',
+        debug: jsonStr.slice(0, 300)
+      });
+    }
+
+    const groundingChunks = candidate.groundingMetadata?.groundingChunks || [];
+    const realSources = groundingChunks
+      .map((c) => ({ title: c.web?.title || '', url: c.web?.uri || '' }))
+      .filter((s) => s.url)
+      .slice(0, 5);
+    if (realSources.length) {
+      parsed.sources = realSources;
+    } else if (!Array.isArray(parsed.sources)) {
+      parsed.sources = [];
+    }
+
+    res.json(parsed);
+  } catch (err) {
+    console.error('Unexpected error in /api/optimize-wallet:', err);
     res.status(500).json({ error: err.message || 'Unexpected server error' });
   }
 });

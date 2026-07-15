@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FinMitra Pro — FinMitra</title>
+<meta name="description" content="Go ad-free on FinMitra and support future development.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="pro">
+<div class="wrap">
+<header class="top">
+    
+    <h1>FinMitra Pro</h1>
+    <p class="sub">Skip the ads and support future development.</p>
+  </header>
+
+  <div class="pro-section" id="proSection">
+    <div class="pro-header"><i class="ti ti-sparkles"></i><h2>FinMitra Pro</h2></div>
+    <p class="pro-sub">Skip the ads, get faster answers during busy hours, and unlock richer exports — all while the free tier stays fully usable for everyone.</p>
+    <div class="pro-tiers">
+      <div class="pro-tier">
+        <div class="pro-tier-name">Free</div>
+        <div class="pro-tier-price">₹0</div>
+        <ul>
+          <li><i class="ti ti-check"></i>All 6 tools, unlimited use</li>
+          <li><i class="ti ti-check"></i>Compare up to 4 cards</li>
+          <li><i class="ti ti-check"></i>20 lookups per hour</li>
+        </ul>
+        <button type="button" class="pro-tier-btn ghost-btn" disabled>Your current plan</button>
+      </div>
+      <div class="pro-tier highlight">
+        <div class="pro-tier-name">Pro</div>
+        <div class="pro-tier-price">₹99 <span>one-time, lifetime</span></div>
+        <ul>
+          <li><i class="ti ti-check"></i>Everything in Free</li>
+          <li><i class="ti ti-check"></i>Ad-free, permanently</li>
+          <li><i class="ti ti-check"></i>Formatted PDF-style export</li>
+          <li><i class="ti ti-check"></i>Supports future development</li>
+        </ul>
+        <!-- Replace data-payment_button_id below with your own Razorpay Payment Button ID (Razorpay Dashboard -> Payment Buttons). No backend required for this part. -->
+        <form id="razorpayForm">
+          <script src="https://checkout.razorpay.com/v1/payment-button.js" data-payment_button_id="REPLACE_WITH_YOUR_RAZORPAY_BUTTON_ID" async></script>
+        </form>
+        <button type="button" class="pro-tier-btn primary-btn" id="goProTierBtn">Get Pro — ₹99</button>
+      </div>
+    </div>
+    <div class="pro-redeem-row">
+      <input type="text" id="proCodeInput" placeholder="Already paid? Enter your Pro code" autocomplete="off" />
+      <button type="button" id="proCodeRedeem">Unlock</button>
+    </div>
+    <div class="pro-status" id="proStatus"></div>
+  </div>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

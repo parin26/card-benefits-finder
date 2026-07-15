@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Find my ideal card — FinMitra</title>
+<meta name="description" content="Get a personalized credit card recommendation based on your spending habits.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="quiz">
+<div class="wrap">
+<header class="top">
+    
+    <h1>Find my ideal card</h1>
+    <p class="sub">Answer a few quick questions about your spending, and get matched with cards that actually fit your habits.</p>
+  </header>
+
+  <div id="panelQuiz">
+    <div class="quiz-panel">
+      <div class="field-group">
+        <label>Where do you spend the most?</label>
+        <select id="quizSpendCategory">
+          <option value="Online shopping">Online shopping</option>
+          <option value="Dining and food delivery">Dining and food delivery</option>
+          <option value="Travel and flights">Travel and flights</option>
+          <option value="Fuel">Fuel</option>
+          <option value="Groceries and utilities">Groceries and utilities</option>
+          <option value="A mix, nothing dominant">A mix, nothing dominant</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Typical monthly card spend</label>
+        <select id="quizSpendAmount">
+          <option value="Below ₹10,000">Below ₹10,000</option>
+          <option value="₹10,000 to ₹30,000" selected>₹10,000 - ₹30,000</option>
+          <option value="₹30,000 to ₹75,000">₹30,000 - ₹75,000</option>
+          <option value="Above ₹75,000">Above ₹75,000</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Do you want airport lounge access?</label>
+        <select id="quizLounge">
+          <option value="Yes, it matters to me">Yes, it matters to me</option>
+          <option value="Not important">Not important</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Preferred network (optional)</label>
+        <select id="quizNetwork">
+          <option value="">No preference</option>
+          <option value="Visa">Visa</option>
+          <option value="Mastercard">Mastercard</option>
+          <option value="RuPay">RuPay</option>
+        </select>
+      </div>
+      <button class="primary" id="goQuiz"><i class="ti ti-sparkles"></i> Find my ideal card</button>
+    </div>
+    <div id="resultsQuiz"><div class="results-empty"><i class="ti ti-sparkles"></i>Answer a few quick questions to get matched with cards that fit your spending.</div></div>
+  </div>
+
+  <p class="disclaimer">
+    Results come from a live web search each time, so always confirm fees, interest rates, and eligibility
+    on the bank's own page before applying. Data can occasionally be outdated or drawn from an unofficial source.
+    Network availability shown in the dropdown is a best-effort list, not verified live against each bank's site.
+  </p>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

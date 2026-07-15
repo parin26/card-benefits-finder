@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Look up a card — FinMitra</title>
+<meta name="description" content="Look up current fees, rewards, and benefits for any Indian bank credit or debit card.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="lookup">
+<div class="wrap">
+<header class="top">
+    <div class="eyebrow"><span><b>1</b> Bank</span><span><b>2</b> Card type</span><span><b>3</b> Network</span><span><b>4</b> Variant</span></div>
+    <h1>Look up a card</h1>
+    <p class="sub">Pick a bank, card type, and network to see matching cards, then find their current benefits, fees, and eligibility in one place.</p>
+  </header>
+
+  <div class="ad-slot leaderboard" id="adSlotTop"><span style="margin-top:10px;">Your ad here - see DEPLOYMENT.md to configure AdSense</span></div>
+
+  <div id="panelSingle" class="layout">
+    <div class="sticky-col">
+      <div class="card-mock" id="mockSingle">
+        <div class="card-mock-top">
+          <div class="card-mock-bank" id="mockBankSingle">Bank</div>
+          <div class="card-mock-network" id="mockNetworkSingle">ANY</div>
+        </div>
+        <div>
+          <div class="card-mock-chip"></div>
+          <div class="card-mock-variant" id="mockVariantSingle">Variant</div>
+        </div>
+        <div class="card-mock-bottom">
+          <span id="mockTypeSingle">Credit card</span>
+          <span class="card-mock-dots" id="mockDotsSingle">•••• 1234</span>
+        </div>
+      </div>
+      <div class="picker" data-idx="0">
+        <div class="field-group">
+          <label>Bank</label>
+          <select class="bank"></select>
+        </div>
+        <div class="field-group">
+          <label>Card type</label>
+          <select class="cardType">
+            <option value="Credit Card">Credit card</option>
+            <option value="Debit Card">Debit card</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Network</label>
+          <select class="network"></select>
+        </div>
+        <div class="field-group">
+          <label>Variant</label>
+          <div class="variant-combo">
+            <input type="text" class="variant-input" placeholder="Search or type a variant" autocomplete="off" />
+            <div class="variant-dropdown" hidden></div>
+          </div>
+        </div>
+        <button type="button" class="bin-toggle"><i class="ti ti-chevron-down"></i> I have my card handy (optional)</button>
+        <div class="bin-field">
+          <label>Your card's BIN (first 6-8 digits)</label>
+          <input class="bin" type="text" inputmode="numeric" maxlength="8" placeholder="e.g. 123456" />
+        </div>
+      </div>
+      <button class="primary" id="goSingle">Find benefits</button>
+    </div>
+    <div id="resultsSingle"><div class="results-empty"><i class="ti ti-credit-card-search"></i>Pick a bank, card type, and network, then choose from the matching cards.</div></div>
+  </div>
+
+  <p class="disclaimer">
+    Results come from a live web search each time, so always confirm fees, interest rates, and eligibility
+    on the bank's own page before applying. Data can occasionally be outdated or drawn from an unofficial source.
+    Network availability shown in the dropdown is a best-effort list, not verified live against each bank's site.
+  </p>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

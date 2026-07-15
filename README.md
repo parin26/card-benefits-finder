@@ -1,12 +1,14 @@
-# Card Benefits Finder
+# FinMitra — your financial friend
 
-A one-stop tool for figuring out what your Indian bank card actually gives you — without visiting six different bank websites to find out.
+![FinMitra logo](docs/logo-horizontal.svg)
 
-Pick your bank, card type, and network, and it pulls current fees, rewards, lounge access, insurance, forex markup, and eligibility straight from a live search — not a static database that goes stale the moment a bank changes its terms.
+A one-stop tool for figuring out what your Indian bank cards, salary account, and deposits actually give you — without visiting a dozen different bank websites to find out.
+
+Pick your bank, card type, and network, and it pulls current fees, rewards, lounge access, insurance, and forex markup straight from a live search — not a static database that goes stale the moment a bank changes its terms. It also compares salary accounts, recommends cards based on your spending habits, and compares FD/RD interest rates across banks.
 
 ## What it looks like
 
-*(These are illustrative mockups built from the app's actual design, not live screenshots — this project doesn't include screenshot tooling. The real thing looks like this, just running live in your browser.)*
+*(These are illustrative mockups built from the app's actual design, not live screenshots — this project doesn't include screenshot tooling. Note: these mockups predate the multi-page rebuild, so the navigation shown as tabs is now a proper top nav bar across separate pages — the individual tool screens themselves still look like this.)*
 
 **Looking up a single card:**
 
@@ -42,13 +44,16 @@ Bookmark cards you're considering, and if a card's fee waiver depends on hitting
 
 ## How to use it
 
-1. Pick your bank from the dropdown.
-2. Choose credit or debit card.
-3. Pick a network (Visa, Mastercard, RuPay, etc.) — or leave it on "Any" if you're not sure.
-4. Pick the specific card variant. Long lists (some banks have 50+ cards) are searchable — just start typing.
-5. Hit **Find benefits**. Results are grouped into tabs: **Overview** (the essentials), **Rewards and perks**, and **Fees and eligibility** (the fine print), so you're not scrolling through everything at once.
+FinMitra is a proper multi-page site now — a home page with a tool grid, and one dedicated page per tool, linked from the navigation bar on every page. Pick a tool below to jump straight in:
 
-Everything else — comparing, the salary finder, the quiz, the chat — is available from the tabs at the top of the page.
+- **Look up a card** — pick a bank, card type, network, and variant (long lists are searchable, just start typing), and get fees, rewards, lounge access, and how to waive the annual fee, split into Overview / Rewards / Fees and eligibility tabs so you're not scrolling through everything at once.
+- **Compare cards** — line up 2 to 4 cards side by side with a visual fee/forex chart.
+- **Find a salary account** — enter your monthly salary range for accounts you'd actually qualify for.
+- **Find my ideal card** — answer a few quick questions about your spending instead of already knowing what to search for.
+- **Compare investments** — FD/RD rate comparisons and mutual fund risk guidance.
+- **Optimize my cards** — tell it what you already hold, get a plan for using each one to full potential.
+- **Saved cards** — everything you've bookmarked, plus links to each network's own benefits portal.
+- **Ask a question** — a chat button in the bottom corner is available on every page for anything not covered above.
 
 ## How accurate is this, really
 

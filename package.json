@@ -1,7 +1,7 @@
 {
-  "name": "card-benefits-app",
-  "version": "1.0.0",
-  "description": "One-stop lookup and comparison tool for Indian bank card benefits, powered by Claude with web search.",
+  "name": "finmitra",
+  "version": "2.0.0",
+  "description": "FinMitra — your financial friend. Compare Indian bank card benefits, salary accounts, and FD/RD rates with live search, powered by Gemini.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

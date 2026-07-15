@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Compare cards — FinMitra</title>
+<meta name="description" content="Compare Indian bank credit and debit cards side by side on fees, rewards, and benefits.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="compare">
+<div class="wrap">
+<header class="top">
+    
+    <h1>Compare cards side by side</h1>
+    <p class="sub">Line up 2 to 4 cards at once, with a quick visual comparison of annual fees and forex markup.</p>
+  </header>
+
+  <div id="panelCompare" class="compare-grid"></div>
+  <div id="compareControls">
+    <button class="primary" id="goCompare" style="margin: 18px 0;">Compare cards</button>
+    <div id="chartContainer"></div>
+    <div id="resultsCompare" class="compare-grid"></div>
+  </div>
+
+  <p class="disclaimer">
+    Results come from a live web search each time, so always confirm fees, interest rates, and eligibility
+    on the bank's own page before applying. Data can occasionally be outdated or drawn from an unofficial source.
+    Network availability shown in the dropdown is a best-effort list, not verified live against each bank's site.
+  </p>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

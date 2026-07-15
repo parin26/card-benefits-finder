@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Salary account finder — FinMitra</title>
+<meta name="description" content="Find the best salary account for your income level across major Indian banks.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="salary">
+<div class="wrap">
+<header class="top">
+    
+    <h1>Find the right salary account</h1>
+    <p class="sub">Tell us your monthly salary range and we will show accounts you would actually qualify for, ranked by real value.</p>
+  </header>
+
+  <div id="panelSalary">
+    <div class="salary-panel">
+      <div class="field-group">
+        <label>Monthly salary (in-hand)</label>
+        <select id="salaryRange">
+          <option value="Below ₹15,000 per month">Below ₹15,000/month</option>
+          <option value="₹15,000 to ₹25,000 per month">₹15,000 - ₹25,000/month</option>
+          <option value="₹25,000 to ₹50,000 per month" selected>₹25,000 - ₹50,000/month</option>
+          <option value="₹50,000 to ₹1,00,000 per month">₹50,000 - ₹1,00,000/month</option>
+          <option value="₹1,00,000 to ₹2,00,000 per month">₹1,00,000 - ₹2,00,000/month</option>
+          <option value="Above ₹2,00,000 per month">Above ₹2,00,000/month</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Preferred bank (optional)</label>
+        <select id="salaryPreferredBank"><option value="">No preference - show the best fit</option></select>
+      </div>
+      <button class="primary" id="goSalary"><i class="ti ti-search"></i> Find salary accounts</button>
+    </div>
+    <div id="resultsSalary"><div class="results-empty"><i class="ti ti-building-bank"></i>Pick your monthly salary range to see which accounts fit you best.</div></div>
+  </div>
+
+  <p class="disclaimer">
+    Results come from a live web search each time, so always confirm fees, interest rates, and eligibility
+    on the bank's own page before applying. Data can occasionally be outdated or drawn from an unofficial source.
+    Network availability shown in the dropdown is a best-effort list, not verified live against each bank's site.
+  </p>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

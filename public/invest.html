@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Compare investments — FinMitra</title>
+<meta name="description" content="Compare Fixed Deposit and Recurring Deposit interest rates across Indian banks, plus mutual fund risk guidance.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-page="invest">
+<div class="wrap">
+<header class="top">
+    
+    <h1>Compare FD, RD and mutual fund options</h1>
+    <p class="sub">Factual rate comparisons for deposits, and educational risk guidance for mutual funds - never investment advice.</p>
+  </header>
+
+  <div id="panelInvest">
+    <div class="invest-panel">
+      <div class="field-group">
+        <label>Investment type</label>
+        <select id="investType">
+          <option value="Fixed Deposit">Fixed Deposit (FD)</option>
+          <option value="Recurring Deposit">Recurring Deposit (RD)</option>
+          <option value="Mutual Fund">Mutual Fund</option>
+        </select>
+      </div>
+      <div id="investFdRdFields">
+        <div class="field-group">
+          <label>Tenure</label>
+          <select id="investTenure">
+            <option value="7 Days to 1 Month 15 Days">7 Days to 1 Month 15 Days</option>
+            <option value="1 Month 16 Days to 3 Months">1 Month 16 Days to 3 Months</option>
+            <option value="3 Months 1 Day to 6 Months">3 Months 1 Day to 6 Months</option>
+            <option value="6 Months 1 Day to 12 Months">6 Months 1 Day to 12 Months</option>
+            <option value="12 Months 1 Day to 15 Months" selected>12 Months 1 Day to 15 Months</option>
+            <option value="15 Months 1 Day to 18 Months">15 Months 1 Day to 18 Months</option>
+            <option value="18 Months 1 Day to 24 Months">18 Months 1 Day to 24 Months</option>
+            <option value="24 Months 1 Day to 30 Months">24 Months 1 Day to 30 Months</option>
+            <option value="30 Months 1 Day to 36 Months">30 Months 1 Day to 36 Months</option>
+            <option value="36 Months 1 Day to 45 Months">36 Months 1 Day to 45 Months</option>
+            <option value="45 Months 1 Day to less than 60 Months">45 Months 1 Day to less than 60 Months</option>
+            <option value="60 Months to 120 Months">60 Months to 120 Months</option>
+          </select>
+        </div>
+        <div class="invest-checkbox-row">
+          <input type="checkbox" id="investSenior" />
+          <label for="investSenior">I'm a senior citizen (usually gets a higher rate)</label>
+        </div>
+      </div>
+      <div id="investMfFields">
+        <div class="field-group">
+          <label>Risk appetite</label>
+          <select id="investRisk">
+            <option value="Low">Low - I want to preserve capital</option>
+            <option value="Medium" selected>Medium - some ups and downs are fine</option>
+            <option value="High">High - I can handle volatility for growth</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Investment horizon</label>
+          <select id="investHorizon">
+            <option value="Short term (under 3 years)">Short term (under 3 years)</option>
+            <option value="Medium term (3 to 5 years)" selected>Medium term (3-5 years)</option>
+            <option value="Long term (5+ years)">Long term (5+ years)</option>
+          </select>
+        </div>
+      </div>
+      <button class="primary" id="goInvest"><i class="ti ti-chart-line"></i> Compare</button>
+    </div>
+    <div id="resultsInvest"><div class="results-empty"><i class="ti ti-chart-line"></i>Pick an investment type to compare rates and understand the risk involved.</div></div>
+  </div>
+
+  <p class="disclaimer">
+    Results come from a live web search each time, so always confirm fees, interest rates, and eligibility
+    on the bank's own page before applying. Data can occasionally be outdated or drawn from an unofficial source.
+    Network availability shown in the dropdown is a best-effort list, not verified live against each bank's site.
+  </p>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>
